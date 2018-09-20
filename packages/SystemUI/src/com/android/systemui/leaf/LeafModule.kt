@@ -18,6 +18,7 @@ package com.android.systemui.leaf
 
 import com.android.systemui.qs.tileimpl.QSTileImpl
 import com.android.systemui.qs.tiles.CaffeineTile
+import com.android.systemui.qs.tiles.CompassTile
 import com.android.systemui.qs.tiles.DataSwitchTile
 import com.android.systemui.qs.tiles.PowerShareTile
 import dagger.Binds
@@ -32,6 +33,12 @@ interface LeafModule {
     @IntoMap
     @StringKey(CaffeineTile.TILE_SPEC)
     fun bindCaffeineTile(caffeineTile: CaffeineTile): QSTileImpl<*>
+
+    /** Inject CompassTile into tileMap in QSModule */
+    @Binds
+    @IntoMap
+    @StringKey(CompassTile.TILE_SPEC)
+    fun bindCompassTile(compassTile: CompassTile): QSTileImpl<*>
 
     /** Inject DataSwitchTile into tileMap in QSModule */
     @Binds
