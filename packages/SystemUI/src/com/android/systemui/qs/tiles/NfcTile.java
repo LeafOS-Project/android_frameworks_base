@@ -87,6 +87,7 @@ public class NfcTile extends SecureQSTile<BooleanState> {
     @Override
     public void handleSetListening(boolean listening) {
         super.handleSetListening(listening);
+        if (mListening == listening) return;
         mListening = listening;
         if (mListening) {
             mBroadcastDispatcher.registerReceiver(mNfcReceiver,
@@ -157,7 +158,7 @@ public class NfcTile extends SecureQSTile<BooleanState> {
     private NfcAdapter getAdapter() {
         if (mAdapter == null) {
             try {
-                mAdapter = NfcAdapter.getDefaultAdapter(mContext);
+                mAdapter = NfcAdapter.getNfcAdapter(mContext.getApplicationContext());
             } catch (UnsupportedOperationException e) {
                 mAdapter = null;
             }
