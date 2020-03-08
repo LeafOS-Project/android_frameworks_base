@@ -96,4 +96,15 @@ public interface BackAnimation {
      * @param customizer the controller to control system bar color.
      */
     void setStatusBarCustomizer(StatusBarCustomizer customizer);
+
+    /**
+     * Sets whether the back long swipe gesture is past the trigger threshold or not.
+     */
+    void setTriggerLongSwipe(boolean triggerLongSwipe);
+    /**
+     * Returns a binder that can be passed to an external process to update back animations.
+     */
+    default IBackAnimation createExternalInterface() {
+        return null;
+    }
 }

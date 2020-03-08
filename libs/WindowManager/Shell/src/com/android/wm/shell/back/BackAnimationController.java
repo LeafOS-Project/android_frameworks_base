@@ -46,6 +46,7 @@ import android.util.MathUtils;
 import android.util.SparseArray;
 import android.view.IRemoteAnimationRunner;
 import android.view.InputDevice;
+import android.view.IWindowFocusObserver;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -114,6 +115,8 @@ public class BackAnimationController implements RemoteCallable<BackAnimationCont
     /** @see #setTriggerBack(boolean) */
     private boolean mTriggerBack;
     private FlingAnimationUtils mFlingAnimationUtils;
+    /** @see #setTriggerLongSwipe(boolean) */
+    private boolean mTriggerLongSwipe;
 
     @Nullable
     private BackNavigationInfo mBackNavigationInfo;
@@ -307,6 +310,11 @@ public class BackAnimationController implements RemoteCallable<BackAnimationCont
                 float nonLinearFactor) {
             mShellExecutor.execute(() -> BackAnimationController.this.setSwipeThresholds(
                     linearDistance, maxDistance, nonLinearFactor));
+        }
+
+        public void setTriggerLongSwipe(boolean triggerLongSwipe) {
+            mShellExecutor.execute(
+                    () -> BackAnimationController.this.setTriggerLongSwipe(triggerLongSwipe));
         }
 
         @Override
@@ -615,6 +623,17 @@ public class BackAnimationController implements RemoteCallable<BackAnimationCont
         mTouchTracker.setProgressThresholds(linearDistance, maxDistance, nonLinearFactor);
     }
 
+    /**
+     * Sets to true when the back long swipe gesture has passed the triggering threshold,
+     * false otherwise.
+     */
+    public void setTriggerLongSwipe(boolean triggerLongSwipe) {
+        if (mTransitionInProgress) {
+            return;
+        }
+        mTriggerLongSwipe = triggerLongSwipe;
+    }
+
     private void invokeOrCancelBack() {
         // Make a synchronized call to core before dispatch back event to client side.
         // If the close transition happens before the core receives onAnimationFinished, there will
@@ -737,6 +756,7 @@ public class BackAnimationController implements RemoteCallable<BackAnimationCont
         mShouldStartOnNextMoveEvent = false;
         mTouchTracker.reset();
         mActiveCallback = null;
+        mTriggerLongSwipe = false;
         // reset to default
         if (mDefaultActivityAnimation != null
                 && mAnimationDefinition.contains(BackNavigationInfo.TYPE_CROSS_ACTIVITY)) {
