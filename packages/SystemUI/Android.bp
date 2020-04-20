@@ -197,6 +197,7 @@ android_library {
         "lottie",
         "LowLightDreamLib",
         "motion_tool_lib",
+        "vendor.lineage.powershare-V1.0-java",
     ],
     manifest: "AndroidManifest.xml",
 
@@ -387,6 +388,7 @@ android_library {
         "mockito-target-extended-minus-junit4",
         "androidx.test.ext.junit",
         "androidx.test.ext.truth",
+        "vendor.lineage.powershare-V1.0-java",
     ],
     libs: [
         "android.test.runner",
