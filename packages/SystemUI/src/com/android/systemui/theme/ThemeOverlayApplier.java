@@ -102,6 +102,9 @@ public class ThemeOverlayApplier implements Dumpable {
     static final String OVERLAY_CATEGORY_ICON_THEME_PICKER =
             "android.theme.customization.icon_pack.themepicker";
 
+    static final String OVERLAY_BERRY_BLACK_THEME =
+            "org.leafos.overlay.customization.blacktheme";
+
     /*
      * All theme customization categories used by the system, in order that they should be applied,
      * starts with launcher and grouped by target package.
@@ -222,6 +225,11 @@ public class ThemeOverlayApplier implements Dumpable {
                             true, identifiersPending.contains(overlayInfo));
                 }
             }
+
+            OverlayIdentifier blackTheme = new OverlayIdentifier(OVERLAY_BERRY_BLACK_THEME);
+            setEnabled(transaction, blackTheme, "", currentUser, managedProfiles,
+                    Settings.Secure.getInt(Settings.Secure.BERRY_BLACK_THEME) != 0,
+                    identifiersPending.contains(blackTheme));
 
             try {
                 mOverlayManager.commit(transaction.build());
