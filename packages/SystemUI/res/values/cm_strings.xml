@@ -51,4 +51,9 @@
 
     <!-- Allow devices override audio panel location to the left side -->
     <bool name="config_audioPanelOnLeftSide">false</bool>
+
+    <!-- Caffeine tile -->
+    <string name="quick_settings_caffeine_label">Caffeine</string>
+    <string name="accessibility_quick_settings_caffeine_off">Caffeine off</string>
+    <string name="accessibility_quick_settings_caffeine_on">Caffeine on</string>
 </resources>
