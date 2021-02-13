@@ -16,6 +16,7 @@
     <string-array translatable="false" name="custom_config_globalActionsList">
         <item>emergency</item>
         <item>power</item>
+        <item>advanced</item>
         <item>restart</item>
         <item>logout</item>
     </string-array>
