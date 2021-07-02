@@ -3201,7 +3201,27 @@ public class PackageManagerService implements PackageSender, TestUtilityService 
                         + " in user " + targetUserId + " does not belong to calling uid "
                         + callingUid);
             }
+       }
+
+        final int packageUid = snapshot.getPackageUid(suspender.packageName, 0, targetUserId);
+        if (packageUid == callingUid) {
+            return;
         }
+
+        final String callerMismatchMessage = "Suspending package " + suspender.packageName
+                + " in user " + targetUserId + " does not belong to calling uid " + callingUid;
+        if (!UserHandle.isSameApp(packageUid, callingUid)) {
+            throw new SecurityException(callerMismatchMessage);
+        }
+
+        final UserManagerService ums = UserManagerService.getInstance();
+        final UserInfo parent = ums != null ? ums.getProfileParent(targetUserId) : null;
+
+        // If calling from a parent, we only need INTERACT_ACROSS_USERS, not full.
+        final boolean requireFullPermission = parent == null
+                || callingUid != snapshot.getPackageUid(suspender.packageName, 0, parent.id);
+        snapshot.enforceCrossUserPermission(callingUid, targetUserId, requireFullPermission,
+                false /* checkShell */, callerMismatchMessage);
     }
 
     /**
