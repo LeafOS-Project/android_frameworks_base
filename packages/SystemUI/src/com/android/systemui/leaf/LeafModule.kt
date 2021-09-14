@@ -25,6 +25,7 @@ import com.android.systemui.qs.tiles.DataSwitchTile
 import com.android.systemui.qs.tiles.PowerShareTile
 import com.android.systemui.qs.tiles.WifiTile
 import com.android.systemui.qs.tiles.LocaleTile
+import com.android.systemui.qs.tiles.RefreshRateTile
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -79,4 +80,10 @@ interface LeafModule {
     @IntoMap
     @StringKey(LocaleTile.TILE_SPEC)
     fun bindLocaleTile(localeTile: LocaleTile): QSTileImpl<*>
+
+    /** Inject RefreshRateTile into tileMap in QSModule */
+    @Binds
+    @IntoMap
+    @StringKey(RefreshRateTile.TILE_SPEC)
+    fun bindRefreshRateTile(refreshRateTile: RefreshRateTile): QSTileImpl<*>
 }

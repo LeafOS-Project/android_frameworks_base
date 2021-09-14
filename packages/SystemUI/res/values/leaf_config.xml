@@ -26,4 +26,7 @@
 
     <!-- Udfps vendor code -->
     <integer name="config_udfpsVendorCode">0</integer>
+
+    <!-- Whether show refresh rate QS tile -->
+    <bool name="config_showRefreshRateQsTile">false</bool>
 </resources>
