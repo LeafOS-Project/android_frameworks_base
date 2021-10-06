@@ -20,6 +20,9 @@ import com.android.systemui.keyguard.dagger.KeyguardModule;
 import com.android.systemui.recents.RecentsModule;
 import com.android.systemui.statusbar.dagger.CentralSurfacesModule;
 
+import org.protonaosp.systemui.theme.CustomThemeOverlayController;
+
+import dagger.Binds;
 import dagger.Module;
 
 /**
@@ -31,4 +34,9 @@ import dagger.Module;
         KeyguardModule.class,
 })
 public abstract class SystemUIBinder {
+    /** Inject into CustomThemeOverlayController. */
+    @Binds
+    @IntoMap
+    @ClassKey(CustomThemeOverlayController.class)
+    public abstract SystemUI bindCustomThemeOverlayController(CustomThemeOverlayController sysui);
 }
