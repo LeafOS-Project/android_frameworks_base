@@ -12,4 +12,7 @@
     <integer name="qs_panel_num_columns">2</integer>
     <integer name="qs_panel_num_columns_landscape">4</integer>
     <integer name="qs_panel_num_columns_media">2</integer>
+
+    <!-- Color of the UDFPS pressed view -->
+    <color name="config_udfpsColor">#ffffffff</color>
 </resources>
