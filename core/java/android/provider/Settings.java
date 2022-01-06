@@ -9756,6 +9756,28 @@ public final class Settings {
         public static final String NOTIFICATION_DISMISS_RTL = "notification_dismiss_rtl";
 
         /**
+         * Whether to show the brightness slider in quick settings panel.
+         * 0 = don't show
+         * 1 = show on expanded panel only
+         * 2 = show both on the qqs and on the expanded panel
+         * @hide
+         */
+        public static final String QS_SHOW_BRIGHTNESS_SLIDER = "qs_show_brightness_slider";
+
+        /**
+         * Where to show the brightness slider in quick settings panel.
+         * 0 = Top, 1 = Bottom
+         * @hide
+         */
+        public static final String QS_BRIGHTNESS_SLIDER_POSITION = "qs_brightness_slider_position";
+
+        /**
+         * Whether to show the auto brightness icon in quick settings panel.
+         * @hide
+         */
+        public static final String QS_SHOW_AUTO_BRIGHTNESS = "qs_show_auto_brightness";
+
+        /**
          * Comma separated list of QS tiles that have been auto-added already.
          * @hide
          */
