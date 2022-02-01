@@ -829,6 +829,10 @@
     <protected-broadcast android:name="android.app.admin.action.DEVICE_POLICY_SET_RESULT" />
     <protected-broadcast android:name="android.app.admin.action.DEVICE_POLICY_CHANGED" />
 
+    <!-- App lock -->
+    <protected-broadcast android:name="com.android.server.app.AppLockManagerService.APP_LOCK_TIMEOUT" />
+    <protected-broadcast android:name="android.app.action.UNLOCK_APP" />
+
     <!-- ====================================================================== -->
     <!--                          RUNTIME PERMISSIONS                           -->
     <!-- ====================================================================== -->
@@ -7669,7 +7673,6 @@
     <permission android:name="android.permission.GET_ANY_PROVIDER_TYPE"
                 android:protectionLevel="signature" />
 
-
     <!-- @hide Allows internal applications to read and synchronize non-core flags.
          Apps without this permission can only read a subset of flags specifically intended
          for use in "core", (i.e. third party apps). Apps with this permission can define their
@@ -7686,6 +7689,11 @@
     -->
     <permission android:name="android.permission.WRITE_FLAGS"
         android:protectionLevel="signature" />
+
+    <!-- Allows an application to manage app lock
+         @hide -->
+    <permission android:name="com.android.permission.MANAGE_APP_LOCK"
+                android:protectionLevel="signature|privileged" />
 
     <!-- Attribution for Geofencing service. -->
     <attribution android:tag="GeofencingService" android:label="@string/geofencing_service"/>
