@@ -107,6 +107,8 @@ import com.android.internal.util.Preconditions;
 import com.android.server.LocalServices;
 import com.android.server.SystemService;
 import com.android.server.pm.pkg.AndroidPackage;
+import com.android.server.app.AppLockManagerServiceInternal;
+import com.android.server.pm.parsing.pkg.AndroidPackage;
 import com.android.server.wm.ActivityTaskManagerInternal;
 
 import java.io.FileDescriptor;
@@ -124,6 +126,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -216,6 +219,7 @@ public class LauncherAppsService extends SystemService {
         final LauncherAppsServiceInternal mInternal;
 
         private RemoteCallbackList<IDumpCallback> mDumpCallbacks = new RemoteCallbackList<>();
+        private final AppLockManagerServiceInternal mAppLockManagerInternal;
 
         public LauncherAppsImpl(Context context) {
             mContext = context;
@@ -238,6 +242,7 @@ public class LauncherAppsService extends SystemService {
             mShortcutServiceInternal.addShortcutChangeCallback(mShortcutChangeHandler);
             mCallbackHandler = BackgroundThread.getHandler();
             mDpm = (DevicePolicyManager) mContext.getSystemService(Context.DEVICE_POLICY_SERVICE);
+            mAppLockManagerInternal = LocalServices.getService(AppLockManagerServiceInternal.class);
             mInternal = new LocalService();
         }
 
@@ -683,6 +688,7 @@ public class LauncherAppsService extends SystemService {
 
         private List<LauncherActivityInfoInternal> queryIntentLauncherActivities(
                 Intent intent, int callingUid, UserHandle user) {
+            final Set<String> hiddenApps = mAppLockManagerInternal.getHiddenPackages(user.getIdentifier());
             final List<ResolveInfo> apps = mPackageManagerInternal.queryIntentActivities(intent,
                     intent.resolveTypeIfNeeded(mContext.getContentResolver()),
                     PackageManager.MATCH_DIRECT_BOOT_AWARE
@@ -695,6 +701,10 @@ public class LauncherAppsService extends SystemService {
                 final String packageName = ri.activityInfo.packageName;
                 if (packageName == null) {
                     // should not happen
+                    continue;
+                }
+                if (hiddenApps.contains(packageName)) {
+                    if (DEBUG) Slog.d(TAG, "Skipping package " + packageName);
                     continue;
                 }
                 final IncrementalStatesInfo incrementalStatesInfo =
