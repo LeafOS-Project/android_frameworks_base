@@ -256,7 +256,7 @@ public class NotificationRowBinderImpl implements NotificationRowBinder {
 
         if (screenshareNotificationHiding()
                 ? inflaterParams.getNeedsRedaction()
-                : mNotificationLockscreenUserManager.needsRedaction(entry)) {
+                : mNotificationLockscreenUserManager.needsRedaction(entry) || entry.getSbn().getIsContentSecure()) {
             params.requireContentViews(FLAG_CONTENT_VIEW_PUBLIC);
         } else {
             params.markContentViewsFreeable(FLAG_CONTENT_VIEW_PUBLIC);
