@@ -55,6 +55,7 @@ public class QuickQSPanelController extends QSPanelControllerBase<QuickQSPanel> 
                 if (newMaxTiles != mView.getNumQuickTiles()) {
                     setMaxTiles(newMaxTiles);
                 }
+                mView.updateColumns();
             };
 
     private final boolean mUsingCollapsedLandscapeMedia;
@@ -126,6 +127,7 @@ public class QuickQSPanelController extends QSPanelControllerBase<QuickQSPanel> 
             updateBrightnessMirror();
         });
         mView.addOnConfigurationChangedListener(mOnConfigurationChangedListener);
+        mView.updateColumns();
         mBrightnessMirrorHandler.onQsPanelAttached();
     }
 
@@ -164,6 +166,7 @@ public class QuickQSPanelController extends QSPanelControllerBase<QuickQSPanel> 
 
     private void setMaxTiles(int parseNumTiles) {
         mView.setMaxTiles(parseNumTiles);
+        mView.updateColumns();
         setTiles();
     }
 
