@@ -121,6 +121,7 @@ android_library {
         "lottie",
         "vendor.lineage.powershare-V1.0-java",
         "colorkt",
+        "monet",
         "themelib",
     ],
     manifest: "AndroidManifest.xml",
