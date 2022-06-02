@@ -36,6 +36,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.om.FabricatedOverlay;
+import android.content.om.IOverlayManager;
 import android.content.om.OverlayIdentifier;
 import android.content.om.OverlayManager;
 import android.content.pm.UserInfo;
@@ -44,6 +45,8 @@ import android.database.ContentObserver;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.RemoteException;
+import android.os.ServiceManager;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.Settings;
@@ -384,6 +387,18 @@ public class ThemeOverlayController extends SystemUI implements Dumpable {
         UserHandle userId = UserHandle.of(ActivityManager.getCurrentUser());
         try {
             mOverlayManager.setEnabled(OVERLAY_BERRY_BLACK_THEME, state, userId);
+            if (state) {
+                final IOverlayManager iom = IOverlayManager.Stub.asInterface(
+                        ServiceManager.getService(Context.OVERLAY_SERVICE));
+                try {
+                    // As overlays are also used to apply monet based theming
+                    // we need to set our overlay to highest priority to ensure it is applied
+                    iom.setHighestPriority(OVERLAY_BERRY_BLACK_THEME, userId.getIdentifier());
+                } catch (RemoteException ex) {
+                    Log.e(TAG, "Failed to set priority of overlay " + OVERLAY_BERRY_BLACK_THEME
+                            + " for user " + userId.getIdentifier());
+                }
+            }
             if (DEBUG) {
                 Log.d(TAG, "applyBlackTheme: overlayPackage="
                         + OVERLAY_BERRY_BLACK_THEME + " userId=" + userId);
