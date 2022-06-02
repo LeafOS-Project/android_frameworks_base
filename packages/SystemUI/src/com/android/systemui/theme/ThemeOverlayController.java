@@ -384,6 +384,11 @@ public class ThemeOverlayController extends SystemUI implements Dumpable {
         UserHandle userId = UserHandle.of(ActivityManager.getCurrentUser());
         try {
             mOverlayManager.setEnabled(OVERLAY_BERRY_BLACK_THEME, state, userId);
+            if (state) {
+                // As overlays are also used to apply monet based theming
+                // we need to set our overlay to highest priority to ensure it is applied
+                mOverlayManager.setHighestPriority(OVERLAY_BERRY_BLACK_THEME, userId);
+            }
             if (DEBUG) {
                 Log.d(TAG, "applyBlackTheme: overlayPackage="
                         + OVERLAY_BERRY_BLACK_THEME + " userId=" + userId);
