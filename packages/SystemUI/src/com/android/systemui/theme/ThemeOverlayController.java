@@ -682,6 +682,11 @@ public class ThemeOverlayController extends SystemUI implements Dumpable {
             mThemeManager.applyCurrentUserOverlays(categoryToPackage, null, currentUser,
                     managedProfiles);
         }
+        // Reapply black theme overlay on top of it so it stays enabled if needed
+        if (Settings.Secure.getInt(mContext.getContentResolver(),
+                Settings.Secure.BERRY_BLACK_THEME, 0) != 0) {
+            applyBlackTheme(true);
+        }
     }
 
     @Override
