@@ -28,12 +28,13 @@ import java.util.Arrays;
 public final class AttestationHooks {
     private static final String TAG = "GmsCompat/Attestation";
     private static final String PACKAGE_GMS = "com.google.android.gms";
+    private static final String FAKE_FINGERPRINT = "google/raven/raven:12/SP2A.220505.002/8353555:user/release-keys";
 
     private static volatile boolean sIsGms = false;
 
     private AttestationHooks() { }
 
-    private static void setBuildField(String key, String value) {
+    private static void setClassField(String key, Object value) {
         try {
             // Unlock
             Field field = Build.class.getDeclaredField(key);
@@ -52,6 +53,14 @@ public final class AttestationHooks {
     private static void spoofBuildGms() {
         // Alter model name to avoid hardware attestation enforcement
         setBuildField("MODEL", Build.MODEL + " ");
+        setBuildField("FINGERPRINT", FAKE_FINGERPRINT);
+        setBuildField("TAGS", "release-keys");
+        setBuildField("TYPE", "user");
+        setBuildField("IS_DEBUGGABLE", false);
+        setBuildField("BRAND", "google");
+        setBuildField("MANUFACTURER", "google");
+        setBuildField("DEVICE", "raven");
+        setBuildField("PRODUCT", "raven");
     }
 
     public static void initApplicationBeforeOnCreate(Application app) {
@@ -59,6 +68,24 @@ public final class AttestationHooks {
             sIsGms = true;
             spoofBuildGms();
         }
+    }
+
+    public static String maybeSpoofProperty(String key) {
+        if (sIsGms) {
+            switch (key) {
+                case "ro.vendor.build.fingerprint":
+                case "ro.build.fingerprint": return FAKE_FINGERPRINT;
+                case "ro.build.tags": return "release-keys";
+                case "ro.build.type": return "user";
+                case "ro.vendor.build.security_patch":
+                case "ro.build.version.security_patch": return Build.VERSION.SECURITY_PATCH;
+                case "ro.debuggable": return "0";
+                case "ro.secure": return "1";
+                case "service.adb.root": return "";
+                default: return null;
+            }
+        }
+        return null;
     }
 
     private static boolean isCallerSafetyNet() {
