@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0b9f82b8_04c9dc4e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-06-03T20:11:10Z",
+      "side": 1,
+      "message": "Seems to still not be properly applied sometimes after a reboot.",
+      "revId": "fdb8c0ef88a470097297f884ab3c8f2b22c82b3c",
+      "serverId": "b49086b3-c06c-47ea-b69e-65c8379e1be6"
+    }
+  ]
+}
