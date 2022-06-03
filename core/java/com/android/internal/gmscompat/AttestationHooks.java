@@ -28,6 +28,8 @@ import java.util.Arrays;
 public final class AttestationHooks {
     private static final String TAG = "GmsCompat/Attestation";
     private static final String PACKAGE_GMS = "com.google.android.gms";
+    private static final String FAKE_FINGERPRINT = "google/barbet/barbet:12/SP1A.210812.015/7679548:user/release-keys";
+    private static final String FAKE_SPL = "2021-10-05";
 
     private static volatile boolean sIsGms = false;
 
@@ -52,6 +54,8 @@ public final class AttestationHooks {
     private static void spoofBuildGms() {
         // Alter model name to avoid hardware attestation enforcement
         setBuildField("MODEL", Build.MODEL + " ");
+        setBuildField("FINGERPRINT", FAKE_FINGERPRINT);
+        setBuildField("SECURITY_PATCH", FAKE_SPL);
     }
 
     public static void initApplicationBeforeOnCreate(Application app) {
