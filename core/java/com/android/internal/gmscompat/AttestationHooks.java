@@ -28,15 +28,17 @@ import java.util.Arrays;
 public final class AttestationHooks {
     private static final String TAG = "GmsCompat/Attestation";
     private static final String PACKAGE_GMS = "com.google.android.gms";
+    private static final String FAKE_FINGERPRINT = "google/barbet/barbet:12/SP1A.210812.015/7679548:user/release-keys";
+    private static final String FAKE_SPL = "2021-10-05";
 
     private static volatile boolean sIsGms = false;
 
     private AttestationHooks() { }
 
-    private static void setBuildField(String key, String value) {
+    private static void setClassField(Class clazz, String key, Object value) {
         try {
             // Unlock
-            Field field = Build.class.getDeclaredField(key);
+            Field field = clazz.getDeclaredField(key);
             field.setAccessible(true);
 
             // Edit
@@ -49,9 +51,22 @@ public final class AttestationHooks {
         }
     }
 
+    private static void setBuildField(String key, Object value) {
+        setClassField(Build.class, key, value);
+    }
+
     private static void spoofBuildGms() {
         // Alter model name to avoid hardware attestation enforcement
         setBuildField("MODEL", Build.MODEL + " ");
+        setBuildField("FINGERPRINT", FAKE_FINGERPRINT);
+        setClassField(Build.VERSION.class, "SECURITY_PATCH", FAKE_SPL);
+        setBuildField("TAGS", "release-keys");
+        setBuildField("TYPE", "user");
+        setBuildField("IS_DEBUGGABLE", false);
+        setBuildField("BRAND", "google");
+        setBuildField("MANUFACTURER", "google");
+        setBuildField("DEVICE", "barbet");
+        setBuildField("PRODUCT", "barbet");
     }
 
     public static void initApplicationBeforeOnCreate(Application app) {
@@ -59,6 +74,24 @@ public final class AttestationHooks {
             sIsGms = true;
             spoofBuildGms();
         }
+    }
+
+    public static String maybeSpoofProperty(String key) {
+        if (sIsGms) {
+            switch (key) {
+                case "ro.vendor.build.fingerprint":
+                case "ro.build.fingerprint": return FAKE_FINGERPRINT;
+                case "ro.build.tags": return "release-keys";
+                case "ro.build.type": return "user";
+                case "ro.vendor.build.security_patch":
+                case "ro.build.version.security_patch": return FAKE_SPL;
+                case "ro.debuggable": return "0";
+                case "ro.secure": return "1";
+                case "service.adb.root": return "";
+                default: return null;
+            }
+        }
+        return null;
     }
 
     private static boolean isCallerSafetyNet() {
