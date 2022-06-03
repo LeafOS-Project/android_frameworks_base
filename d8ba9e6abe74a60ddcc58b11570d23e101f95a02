@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "560875a7_548166b2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-06-03T21:09:15Z",
+      "side": 1,
+      "message": "Maybe the properties overridden in the system/core part of topic:twelve-safetynet should be overriden here instead?",
+      "revId": "d8ba9e6abe74a60ddcc58b11570d23e101f95a02",
+      "serverId": "b49086b3-c06c-47ea-b69e-65c8379e1be6"
+    }
+  ]
+}
