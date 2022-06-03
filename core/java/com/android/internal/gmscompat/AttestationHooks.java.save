@@ -1,4 +1,4 @@
-/*
+xqq/*
  * Copyright (C) 2021 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,12 +17,17 @@
 package com.android.internal.gmscompat;
 
 import android.app.Application;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.os.Build;
 import android.os.SystemProperties;
+import android.provider.Settings;
+import android.system.ErrnoException;
 import android.util.Log;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.List;
 
 /** @hide */
 public final class AttestationHooks {
@@ -61,21 +66,33 @@ public final class AttestationHooks {
         setBuildField("MANUFACTURER", "google");
         setBuildField("DEVICE", "raven");
         setBuildField("PRODUCT", "raven");
-    }
 
-    public static String maybeSpoofProperty(String key) {
-        if (sIsGms) {
-            switch (key) {
-                case "ro.vendor.build.fingerprint": return Build.FINGERPRINT;
-                case "ro.vendor.build.security_patch": return Build.VERSION.SECURITY_PATCH;
-                default: return null;
-            }
+        StringBuilder sb = new StringBuilder();
+        sb.append("ro.product.model=" + Build.MODEL + ";");
+        sb.append("ro.build.fingerprint=" + Build.FINGERPRINT + ";");
+        sb.append("ro.build.tags=" + Build.TAGS + ";");
+        sb.append("ro.build.type=" + Build.TYPE + ";");
+        sb.append("ro.debuggable=0;");
+        sb.append("ro.product.brand=" + Build.BRAND + ";");
+        sb.append("ro.product.manufacturer=" + Build.MANUFACTURER + ";");
+        sb.append("ro.product.device=" + Build.DEVICE + ";");
+        sb.append("ro.product.name=" + Build.PRODUCT + ";");
+        sb.append("service.adb.root=0;");
+        sb.append("ro.vendor.build.security_patch=" + Build.VERSION.SECURITY_PATCH);
+
+        try {
+            android.system.Os.setenv("SPOOF_PIXEL_PROPS", sb.toString(), true);
+        } catch (ErrnoException ex) {
+            Log.e("Unable to initialize $SPOOF_PIXEL_PROPS");
         }
-        return null;
     }
 
-    public static void initApplicationBeforeOnCreate(Application app) {
-        if (PACKAGE_GMS.equals(app.getPackageName())) {
+    public static void initApplicationBeforeOnCreate(Context context, Application app) {
+        if (ActivityManager.getService() == null) return;
+        String packages = Settings.Secure.getString(context.getContentResolver(),
+            Settings.Secure.SPOOF_PIXEL_PROPS);
+        if (packages == null) packages = PACKAGE_GMS;
+        if (List.of(packages.split(";")).contains(app.getPackageName())) {
             sIsGms = true;
             spoofBuildGms();
         }
