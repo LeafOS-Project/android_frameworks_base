@@ -25,6 +25,8 @@ import android.util.MutableInt;
 
 import com.android.internal.annotations.GuardedBy;
 
+import com.android.internal.gmscompat.AttestationHooks;
+
 import dalvik.annotation.optimization.CriticalNative;
 import dalvik.annotation.optimization.FastNative;
 
@@ -146,7 +148,8 @@ public class SystemProperties {
     @SystemApi
     public static String get(@NonNull String key) {
         if (TRACK_KEY_ACCESS) onKeyAccess(key);
-        return native_get(key);
+        String spoofed = AttestationHooks.maybeSpoofProperty(key);
+        return spoofed != null ? spoofed : native_get(key);
     }
 
     /**
@@ -162,7 +165,8 @@ public class SystemProperties {
     @SystemApi
     public static String get(@NonNull String key, @Nullable String def) {
         if (TRACK_KEY_ACCESS) onKeyAccess(key);
-        return native_get(key, def);
+        String spoofed = AttestationHooks.maybeSpoofProperty(key);
+        return spoofed != null ? spoofed : native_get(key, def);
     }
 
     /**
@@ -177,7 +181,8 @@ public class SystemProperties {
     @SystemApi
     public static int getInt(@NonNull String key, int def) {
         if (TRACK_KEY_ACCESS) onKeyAccess(key);
-        return native_get_int(key, def);
+        String spoofed = AttestationHooks.maybeSpoofProperty(key);
+        return spoofed != null ? Integer.parseInt(spoofed) : native_get_int(key, def);
     }
 
     /**
@@ -192,7 +197,8 @@ public class SystemProperties {
     @SystemApi
     public static long getLong(@NonNull String key, long def) {
         if (TRACK_KEY_ACCESS) onKeyAccess(key);
-        return native_get_long(key, def);
+        String spoofed = AttestationHooks.maybeSpoofProperty(key);
+        return spoofed != null ? Long.parseLong(spoofed) : native_get_long(key, def);
     }
 
     /**
@@ -212,7 +218,8 @@ public class SystemProperties {
     @SystemApi
     public static boolean getBoolean(@NonNull String key, boolean def) {
         if (TRACK_KEY_ACCESS) onKeyAccess(key);
-        return native_get_boolean(key, def);
+        String spoofed = AttestationHooks.maybeSpoofProperty(key);
+        return spoofed != null ? Boolean.parseBoolean(spoofed) : native_get_boolean(key, def);
     }
 
     /**
