@@ -28,6 +28,7 @@ import java.util.Arrays;
 public final class AttestationHooks {
     private static final String TAG = "GmsCompat/Attestation";
     private static final String PACKAGE_GMS = "com.google.android.gms";
+    private static final String SAMSUNG = "com.samsung.android.";
     private static final String FAKE_FINGERPRINT = "google/raven/raven:12/SP2A.220505.002/8353555:user/release-keys";
 
     private static volatile boolean sIsGms = false;
@@ -64,7 +65,8 @@ public final class AttestationHooks {
     }
 
     public static void initApplicationBeforeOnCreate(Application app) {
-        if (PACKAGE_GMS.equals(app.getPackageName())) {
+        if (PACKAGE_GMS.equals(app.getPackageName())
+                || app.getPackageName().startsWith(SAMSUNG)) {
             sIsGms = true;
             spoofBuildGms();
         }
