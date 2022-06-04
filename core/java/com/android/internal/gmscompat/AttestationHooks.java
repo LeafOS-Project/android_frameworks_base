@@ -17,12 +17,15 @@
 package com.android.internal.gmscompat;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Build;
 import android.os.SystemProperties;
+import android.provider.Settings;
 import android.util.Log;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.List;
 
 /** @hide */
 public final class AttestationHooks {
@@ -63,8 +66,11 @@ public final class AttestationHooks {
         setBuildField("PRODUCT", "raven");
     }
 
-    public static void initApplicationBeforeOnCreate(Application app) {
-        if (PACKAGE_GMS.equals(app.getPackageName())) {
+    public static void initApplicationBeforeOnCreate(Context context, Application app) {
+        String packages = Settings.Secure.getString(context.getContentResolver(),
+            Settings.Secure.SPOOF_PIXEL_PROPS);
+        if (packages == null) packages = PACKAGE_GMS;
+        if (List.of(packages.split(";")).contains(app.getPackageName())) {
             sIsGms = true;
             spoofBuildGms();
         }
