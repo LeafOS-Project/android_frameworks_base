@@ -102,6 +102,10 @@ public class ThemeOverlayApplier implements Dumpable {
     static final String OVERLAY_CATEGORY_ICON_THEME_PICKER =
             "android.theme.customization.icon_pack.themepicker";
 
+    @VisibleForTesting
+    static final String OVERLAY_CATEGORY_BERRY_BLACK_THEME =
+            "org.leafos.theme.customization.berry_black_theme";
+
     /*
      * All theme customization categories used by the system, in order that they should be applied,
      * starts with launcher and grouped by target package.
@@ -115,7 +119,8 @@ public class ThemeOverlayApplier implements Dumpable {
             OVERLAY_CATEGORY_ICON_ANDROID,
             OVERLAY_CATEGORY_ICON_SYSUI,
             OVERLAY_CATEGORY_ICON_SETTINGS,
-            OVERLAY_CATEGORY_ICON_THEME_PICKER);
+            OVERLAY_CATEGORY_ICON_THEME_PICKER
+            OVERLAY_CATEGORY_BERRY_BLACK_THEME);
 
     /* Categories that need to be applied to the current user as well as the system user. */
     @VisibleForTesting
