@@ -167,12 +167,10 @@ public class DependencyProvider {
             @Background Executor bgExecutor,
             @Main Executor mainExecutor,
             OverlayManager overlayManager,
-            DumpManager dumpManager,
-            SecureSettings secureSettings) {
+            DumpManager dumpManager) {
         return new ThemeOverlayApplier(overlayManager, bgExecutor, mainExecutor,
                 context.getString(R.string.launcher_overlayable_package),
-                context.getString(R.string.themepicker_overlayable_package), dumpManager,
-                secureSettings);
+                context.getString(R.string.themepicker_overlayable_package), dumpManager);
     }
 
     /** */

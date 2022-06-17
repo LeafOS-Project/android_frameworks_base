@@ -22,7 +22,6 @@ import android.content.om.OverlayInfo;
 import android.content.om.OverlayManager;
 import android.content.om.OverlayManagerTransaction;
 import android.os.UserHandle;
-import android.provider.Settings;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.util.Pair;
@@ -33,7 +32,6 @@ import androidx.annotation.VisibleForTesting;
 import com.android.systemui.Dumpable;
 import com.android.systemui.dagger.SysUISingleton;
 import com.android.systemui.dump.DumpManager;
-import com.android.systemui.util.settings.SecureSettings;
 
 import com.google.android.collect.Lists;
 import com.google.android.collect.Sets;
@@ -47,8 +45,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
-
-import javax.inject.Inject;
 
 /**
  * Responsible for orchestrating overlays, based on user preferences and other inputs from
@@ -106,9 +102,6 @@ public class ThemeOverlayApplier implements Dumpable {
     static final String OVERLAY_CATEGORY_ICON_THEME_PICKER =
             "android.theme.customization.icon_pack.themepicker";
 
-    static final String OVERLAY_BERRY_BLACK_THEME =
-            "org.leafos.overlay.customization.blacktheme";
-
     /*
      * All theme customization categories used by the system, in order that they should be applied,
      * starts with launcher and grouped by target package.
@@ -143,14 +136,11 @@ public class ThemeOverlayApplier implements Dumpable {
     private final Executor mMainExecutor;
     private final String mLauncherPackage;
     private final String mThemePickerPackage;
-    private final SecureSettings mSecureSettings;
 
-    @Inject
     public ThemeOverlayApplier(OverlayManager overlayManager,
             Executor bgExecutor,
             Executor mainExecutor,
-            String launcherPackage, String themePickerPackage, DumpManager dumpManager,
-            SecureSettings secureSettings) {
+            String launcherPackage, String themePickerPackage, DumpManager dumpManager) {
         mOverlayManager = overlayManager;
         mBgExecutor = bgExecutor;
         mMainExecutor = mainExecutor;
@@ -178,8 +168,6 @@ public class ThemeOverlayApplier implements Dumpable {
         mCategoryToTargetPackage.put(OVERLAY_CATEGORY_ICON_THEME_PICKER, mThemePickerPackage);
 
         dumpManager.registerDumpable(TAG, this);
-
-        mSecureSettings = secureSettings;
     }
 
     /**
@@ -234,11 +222,6 @@ public class ThemeOverlayApplier implements Dumpable {
                             true, identifiersPending.contains(overlayInfo));
                 }
             }
-
-            OverlayIdentifier blackTheme = new OverlayIdentifier(OVERLAY_BERRY_BLACK_THEME);
-            setEnabled(transaction, blackTheme, "", currentUser, managedProfiles,
-                    mSecureSettings.getInt(Settings.Secure.BERRY_BLACK_THEME, 0) != 0,
-                    identifiersPending.contains(blackTheme));
 
             try {
                 mOverlayManager.commit(transaction.build());
