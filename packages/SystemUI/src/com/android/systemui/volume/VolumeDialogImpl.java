@@ -1244,6 +1244,12 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
                 == BluetoothProfile.STATE_CONNECTED;
     }
 
+    private boolean isMediaControllerAvailable() {
+        final MediaController mediaController = getActiveLocalMediaController();
+        return mediaController != null &&
+                !TextUtils.isEmpty(mediaController.getPackageName());
+    }
+
     private void initSettingsH(int lockTaskModeState) {
         if (mRoundedBorderBottom != null){
             mRoundedBorderBottom.setVisibility(!mDeviceProvisionedController.isCurrentUserSetup() ||
@@ -1253,17 +1259,14 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
         if (mSettingsView != null) {
             mSettingsView.setVisibility(
                     mDeviceProvisionedController.isCurrentUserSetup() &&
-                            lockTaskModeState == LOCK_TASK_MODE_NONE && isBluetoothA2dpConnected() ? VISIBLE : GONE);
+                            (isMediaControllerAvailable() || isBluetoothA2dpConnected()) &&
+                            lockTaskModeState == LOCK_TASK_MODE_NONE ? VISIBLE : GONE);
         }
         if (mSettingsIcon != null) {
             mSettingsIcon.setOnClickListener(v -> {
                 Events.writeEvent(Events.EVENT_SETTINGS_CLICK);
-                final MediaController mediaController = getActiveLocalMediaController();
-                String packageName =
-                        mediaController != null
-                                && !TextUtils.isEmpty(mediaController.getPackageName())
-                                ? mediaController.getPackageName()
-                                : "";
+                String packageName = isMediaControllerAvailable()
+                        ? getActiveLocalMediaController().getPackageName() : "";
                 mMediaOutputDialogFactory.create(packageName, true, mDialogView);
                 dismissH(DISMISS_REASON_SETTINGS_CLICKED);
                 if (FeatureFlagUtils.isEnabled(mContext,
