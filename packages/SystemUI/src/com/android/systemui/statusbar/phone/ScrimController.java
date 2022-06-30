@@ -681,10 +681,10 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
                 behindFraction = (float) Math.pow(behindFraction, 0.8f);
                 if (mClipsQsScrim) {
                     mBehindAlpha = QS_CLIP_SCRIM_ALPHA;
-                    mNotificationsAlpha = behindFraction * QS_CLIP_SCRIM_ALPHA;
+                    mNotificationsAlpha = behindFraction * KEYGUARD_SCRIM_ALPHA;
                 } else {
                     mBehindAlpha = behindFraction * mDefaultScrimAlpha;
-                    mNotificationsAlpha = mBehindAlpha;
+                    mNotificationsAlpha = behindFraction * KEYGUARD_SCRIM_ALPHA;
                 }
                 mInFrontAlpha = 0;
             }
@@ -693,7 +693,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
             behindFraction = (float) Math.pow(behindFraction, 0.8f);
 
             mBehindAlpha = behindFraction * mDefaultScrimAlpha;
-            mNotificationsAlpha = mBehindAlpha;
+            mNotificationsAlpha = behindFraction * KEYGUARD_SCRIM_ALPHA;
         } else if (mState == ScrimState.KEYGUARD || mState == ScrimState.SHADE_LOCKED
                 || mState == ScrimState.PULSING) {
             Pair<Integer, Float> result = calculateBackStateForState(mState);
@@ -717,15 +717,15 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
                 mBehindAlpha = behindAlpha;
                 if (mState == ScrimState.SHADE_LOCKED) {
                     // going from KEYGUARD to SHADE_LOCKED state
-                    mNotificationsAlpha = getInterpolatedFraction();
+                    mNotificationsAlpha = KEYGUARD_SCRIM_ALPHA;
                 } else {
-                    mNotificationsAlpha = Math.max(1.0f - getInterpolatedFraction(), mQsExpansion);
+                    mNotificationsAlpha = Math.max(1.0f - KEYGUARD_SCRIM_ALPHA, mQsExpansion);
                 }
                 if (mState == ScrimState.KEYGUARD && mTransitionToFullShadeProgress > 0.0f) {
                     // Interpolate the notification alpha when transitioning!
                     mNotificationsAlpha = MathUtils.lerp(
                             mNotificationsAlpha,
-                            getInterpolatedFraction(),
+                            KEYGUARD_SCRIM_ALPHA,
                             mTransitionToFullShadeProgress);
                 }
                 mNotificationsTint = mState.getNotifTint();
