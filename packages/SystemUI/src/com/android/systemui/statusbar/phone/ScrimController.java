@@ -186,7 +186,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
     private GradientColors mBehindColors;
     private boolean mNeedsDrawableColorUpdate;
 
-    private float mScrimBehindAlphaKeyguard = KEYGUARD_SCRIM_ALPHA;
+    private float mScrimBehindAlphaKeyguard = TRANSPARENT;
     private final float mDefaultScrimAlpha;
 
     private float mRawPanelExpansionFraction;
@@ -740,7 +740,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
             }
             if (mUnOcclusionAnimationRunning && mState == ScrimState.KEYGUARD) {
                 // We're unoccluding the keyguard and don't want to have a bright flash.
-                mNotificationsAlpha = KEYGUARD_SCRIM_ALPHA;
+                mNotificationsAlpha = TRANSPARENT;
                 mNotificationsTint = ScrimState.KEYGUARD.getNotifTint();
             }
         }
