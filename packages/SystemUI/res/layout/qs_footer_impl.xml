@@ -23,6 +23,7 @@
     android:layout_marginStart="@dimen/qs_footer_margin"
     android:layout_marginEnd="@dimen/qs_footer_margin"
     android:layout_marginBottom="@dimen/qs_footers_margin_bottom"
+    android:layout_marginTop="@dimen/qs_footers_margin_top"
     android:background="@android:color/transparent"
     android:baselineAligned="false"
     android:clickable="false"
