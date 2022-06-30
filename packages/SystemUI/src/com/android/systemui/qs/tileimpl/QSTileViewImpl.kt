@@ -118,7 +118,6 @@ open class QSTileViewImpl @JvmOverloads constructor(
     private lateinit var colorBackgroundDrawable: Drawable
     private var paintColor: Int = 0
     private var radiusActive: Float = 0f
-    private var radiusInactive: Float = 0f
     private val shapeAnimator: ValueAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
         duration = QS_ANIM_LENGTH
         interpolator = Interpolators.FAST_OUT_SLOW_IN
@@ -166,7 +165,6 @@ open class QSTileViewImpl @JvmOverloads constructor(
 
         val iconContainerSize = context.resources.getDimensionPixelSize(R.dimen.qs_quick_tile_size)
         radiusActive = iconContainerSize / 2f
-        radiusInactive = iconContainerSize / 4f
         iconContainer = LinearLayout(context)
         iconContainer.layoutParams = LayoutParams(iconContainerSize, iconContainerSize)
         iconContainer.clipChildren = false
@@ -598,12 +596,7 @@ open class QSTileViewImpl @JvmOverloads constructor(
     }
 
     private fun getCornerRadiusForState(state: Int): Float {
-        return when (state) {
-            Tile.STATE_ACTIVE -> radiusActive
-            Tile.STATE_INACTIVE -> radiusInactive
-            Tile.STATE_UNAVAILABLE -> radiusInactive
-            else -> radiusInactive
-        }
+        return radiusActive
     }
 
     /*
