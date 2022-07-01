@@ -169,24 +169,10 @@ public class QuickQSPanel extends QSPanel implements TunerService.Tunable {
             case QS_SHOW_BRIGHTNESS_SLIDER:
                 boolean value =
                         TunerService.parseInteger(newValue, 1) > 1;
-                if (mBrightnessView != null) {
-                    mBrightnessView.setVisibility(value ? VISIBLE : GONE);
-                }
-                break;
-            case QS_BRIGHTNESS_SLIDER_POSITION:
-                mTop = TunerService.parseInteger(newValue, 0) == 0;
-                updateBrightnessSliderPosition();
-                break;
-            case QS_SHOW_AUTO_BRIGHTNESS:
-                mShowAutoBrightnessButton =
-                        TunerService.parseIntegerSwitch(newValue, true);
-                if (mAutoBrightnessIcon != null) {
-                    mAutoBrightnessIcon.setVisibility(mAutomaticAvailable &&
-                            mShowAutoBrightnessButton ? View.VISIBLE : View.GONE);
-                }
+                super.onTuningChanged(key, value ? newValue : "0");
                 break;
             default:
-                break;
+                super.onTuningChanged(key, newValue);
          }
     }
 

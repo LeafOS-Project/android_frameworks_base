@@ -141,6 +141,9 @@ public class QSPanel extends LinearLayout implements Tunable {
         setOrientation(VERTICAL);
 
         mMovableContentStartIndex = getChildCount();
+
+        TunerService tunerService = Dependency.get(TunerService.class);
+        mTop = tunerService.getValue(QS_BRIGHTNESS_SLIDER_POSITION, 0) == 0;
     }
 
     void initialize() {
@@ -199,7 +202,7 @@ public class QSPanel extends LinearLayout implements Tunable {
         }
         mBrightnessView = view;
         mAutoBrightnessIcon = view.findViewById(R.id.brightness_icon);
-        setBrightnessViewMargin(true);
+        setBrightnessViewMargin(mTop);
         if (mBrightnessView != null) {
             addView(mBrightnessView);
             mMovableContentStartIndex++;
