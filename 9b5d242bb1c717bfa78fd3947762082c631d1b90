@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ad575e7a_d3e1aa28",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-07-01T16:52:11Z",
+      "side": 1,
+      "message": "Footer buttons broken in portrait and half cut off in landscape",
+      "revId": "9b5d242bb1c717bfa78fd3947762082c631d1b90",
+      "serverId": "b49086b3-c06c-47ea-b69e-65c8379e1be6"
+    }
+  ]
+}
