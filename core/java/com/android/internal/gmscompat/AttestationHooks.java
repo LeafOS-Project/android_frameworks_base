@@ -29,7 +29,7 @@ public final class AttestationHooks {
     private static final String TAG = "GmsCompat/Attestation";
     private static final String PACKAGE_GMS = "com.google.android.gms";
     private static final String SAMSUNG = "com.samsung.android.";
-    private static final String FAKE_FINGERPRINT = "google/raven/raven:12/SQ3A.220605.009.B1/8650216:user/release-keys";
+    private static final String FAKE_FINGERPRINT = "google/raven/raven:12/SQ3A.220705.003.A1/8672226:user/release-keys";
 
     private static volatile boolean sIsGms = false;
 
