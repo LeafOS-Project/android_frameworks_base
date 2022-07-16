@@ -716,10 +716,14 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
         if (mQSCustomizerController.isCustomizing()) {
             return getView().getHeight();
         }
-        LayoutParams layoutParams = (LayoutParams) mQSPanelScrollView.getLayoutParams();
-        int panelHeight = layoutParams.topMargin + layoutParams.bottomMargin +
-                + mQSPanelScrollView.getMeasuredHeight();
-        return panelHeight + getView().getPaddingBottom();
+        if (mQSDetail.isClosingDetail()) {
+            LayoutParams layoutParams = (LayoutParams) mQSPanelScrollView.getLayoutParams();
+            int panelHeight = layoutParams.topMargin + layoutParams.bottomMargin +
+                    + mQSPanelScrollView.getMeasuredHeight();
+            return panelHeight + getView().getPaddingBottom();
+        } else {
+            return getView().getMeasuredHeight();
+        }
     }
 
     @Override
