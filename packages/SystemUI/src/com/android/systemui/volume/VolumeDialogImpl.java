@@ -1252,7 +1252,7 @@ public class VolumeDialogImpl implements VolumeDialog,
                                 && !TextUtils.isEmpty(mediaController.getPackageName())
                                 ? mediaController.getPackageName()
                                 : "";
-                mMediaOutputDialogFactory.create(packageName, false, mDialogView);
+                mMediaOutputDialogFactory.create(packageName, true, mDialogView);
                 dismissH(DISMISS_REASON_SETTINGS_CLICKED);
             });
         }
