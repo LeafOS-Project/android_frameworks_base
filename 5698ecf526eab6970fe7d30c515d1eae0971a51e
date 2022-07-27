@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c97b9aec_59fca0b7",
+        "filename": "core/java/android/provider/Settings.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 9759,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-07-27T19:28:42Z",
+      "side": 1,
+      "message": "Missing Settings app changes for these",
+      "revId": "5698ecf526eab6970fe7d30c515d1eae0971a51e",
+      "serverId": "b49086b3-c06c-47ea-b69e-65c8379e1be6"
+    }
+  ]
+}
