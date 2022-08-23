@@ -29,6 +29,7 @@ public final class AttestationHooks {
     private static final String TAG = "GmsCompat/Attestation";
     private static final String PACKAGE_GMS = "com.google.android.gms";
     private static final String PROCESS_UNSTABLE = "com.google.android.gms.unstable";
+    private static final String PACKAGE_FINSKY = "com.android.vending";
     private static final String SAMSUNG = "com.samsung.android.";
     private static final String FAKE_FINGERPRINT = "google/raven/raven:13/TP1A.220905.004/8927612:user/release-keys";
 
@@ -79,6 +80,7 @@ public final class AttestationHooks {
     public static void initApplicationBeforeOnCreate(Application app) {
         if (PACKAGE_GMS.equals(app.getPackageName())
                 && PROCESS_UNSTABLE.equals(Application.getProcessName())
+                || PACKAGE_FINSKY.equals(app.getPackageName())
                 || app.getPackageName().startsWith(SAMSUNG)) {
             sIsGms = true;
             spoofBuildGms();
