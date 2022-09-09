@@ -28,8 +28,6 @@ import static com.android.internal.widget.LockPatternUtils.StrongAuthTracker.SOM
 import static com.android.internal.widget.LockPatternUtils.StrongAuthTracker.STRONG_AUTH_NOT_REQUIRED;
 import static com.android.internal.widget.LockPatternUtils.StrongAuthTracker.STRONG_AUTH_REQUIRED_AFTER_USER_LOCKDOWN;
 
-import static org.lineageos.internal.util.PowerMenuConstants.*;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
@@ -37,6 +35,7 @@ import android.annotation.Nullable;
 import android.app.ActivityManager;
 import android.app.Dialog;
 import android.app.IActivityManager;
+import android.app.KeyguardManager;
 import android.app.StatusBarManager;
 import android.app.WallpaperManager;
 import android.app.admin.DevicePolicyManager;
@@ -134,8 +133,6 @@ import com.android.systemui.util.RingerModeTracker;
 import com.android.systemui.util.settings.GlobalSettings;
 import com.android.systemui.util.settings.SecureSettings;
 
-import org.lineageos.internal.util.PowerMenuUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -160,6 +157,23 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
     private static final String TAG = "GlobalActionsDialogLite";
 
     private static final boolean SHOW_SILENT_TOGGLE = true;
+
+    /* Valid settings for global actions keys.
+     * see config.xml config_globalActionList */
+    @VisibleForTesting
+    static final String GLOBAL_ACTION_KEY_POWER = "power";
+    private static final String GLOBAL_ACTION_KEY_AIRPLANE = "airplane";
+    static final String GLOBAL_ACTION_KEY_BUGREPORT = "bugreport";
+    private static final String GLOBAL_ACTION_KEY_SILENT = "silent";
+    private static final String GLOBAL_ACTION_KEY_USERS = "users";
+    private static final String GLOBAL_ACTION_KEY_SETTINGS = "settings";
+    static final String GLOBAL_ACTION_KEY_LOCKDOWN = "lockdown";
+    private static final String GLOBAL_ACTION_KEY_VOICEASSIST = "voiceassist";
+    private static final String GLOBAL_ACTION_KEY_ASSIST = "assist";
+    static final String GLOBAL_ACTION_KEY_RESTART = "restart";
+    private static final String GLOBAL_ACTION_KEY_LOGOUT = "logout";
+    static final String GLOBAL_ACTION_KEY_EMERGENCY = "emergency";
+    static final String GLOBAL_ACTION_KEY_SCREENSHOT = "screenshot";
 
     /* Valid settings for restart actions keys.
      * see lineage-sdk config.xml config_restartActionsList */
@@ -517,7 +531,13 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
     }
 
     private boolean shouldShowRestartSubmenu() {
-        return PowerMenuUtils.isAdvancedRestartPossible(mContext);
+        KeyguardManager km = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
+        boolean keyguardLocked = km.inKeyguardRestrictedInputMode() && km.isKeyguardSecure();
+        boolean advancedRestartEnabled = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.POWERMENU_ADVANCED, 0) == 1;
+        boolean isPrimaryUser = UserHandle.getCallingUserId() == UserHandle.USER_SYSTEM;
+
+        return advancedRestartEnabled && !keyguardLocked && isPrimaryUser;
     }
 
     /**
@@ -555,8 +575,21 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
 
     @VisibleForTesting
     protected String[] getRestartActions() {
-        return mResources.getStringArray(
-                org.lineageos.platform.internal.R.array.config_restartActionsList);
+        List<String> actions = new ArrayList<>();
+
+        actions.add("restart");
+        actions.add("restart_recovery");
+        if (SystemProperties.getBoolean("ro.boot.dynamic_partitions", false) ||
+                SystemProperties.getBoolean("ro.fastbootd.available", false)) {
+            actions.add("restart_fastboot");
+        }
+        if ("samsung".equals(SystemProperties.get("ro.product.vendor.manufacturer", "google"))) {
+            actions.add("restart_download");
+        } else {
+            actions.add("restart_bootloader");
+        }
+
+        return actions.toArray(String[]::new);
     }
 
     @VisibleForTesting
