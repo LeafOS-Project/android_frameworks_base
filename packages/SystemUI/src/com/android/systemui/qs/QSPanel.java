@@ -336,13 +336,13 @@ public class QSPanel extends LinearLayout implements Tunable {
         switch (key) {
             case QS_SHOW_BRIGHTNESS_SLIDER:
                 boolean value =
-                        TunerService.parseInteger(newValue, 1) >= 1;
+                        TunerService.parseInteger(newValue, 2) >= 1;
                 if (mBrightnessView != null) {
                     mBrightnessView.setVisibility(value ? VISIBLE : GONE);
                 }
                 break;
             case QS_BRIGHTNESS_SLIDER_POSITION:
-                mTop = TunerService.parseInteger(newValue, 0) == 0;
+                mTop = TunerService.parseInteger(newValue, 1) == 0;
                 updateBrightnessSliderPosition();
                 break;
             case QS_SHOW_AUTO_BRIGHTNESS:
@@ -474,7 +474,7 @@ public class QSPanel extends LinearLayout implements Tunable {
         if (mBrightnessView != null) {
             mTop = Settings.Secure.getIntForUser(mContext.getContentResolver(),
                 Settings.Secure.QS_BRIGHTNESS_SLIDER_POSITION,
-                0, UserHandle.USER_CURRENT) == 0;
+                1, UserHandle.USER_CURRENT) == 0;
             if (!mUsingHorizontalLayout) {
                 switchToParent(mBrightnessView, parent, mTop ? 0 : index);
                 index++;
