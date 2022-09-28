@@ -5782,6 +5782,12 @@ public final class Settings {
         public static final String HIDE_POWERMENU_LOCKSCREEN = "hide_powermenu_lockscreen";
 
         /**
+         * Enable/Disable fingerprint lockout
+         * @hide
+         */
+        public static final String FINGERPRINT_LOCKOUT = "fingerprint_lockout";
+
+        /**
          * When to use Wi-Fi calling
          *
          * @see android.telephony.TelephonyManager.WifiCallingChoices
