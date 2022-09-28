@@ -29,6 +29,7 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.util.Slog;
 import android.util.SparseBooleanArray;
 import android.util.SparseIntArray;
@@ -70,6 +71,7 @@ public class LockoutFrameworkImpl implements LockoutTracker {
         void onLockoutReset(int userId);
     }
 
+    private final Context mContext;
     private final LockoutResetCallback mLockoutResetCallback;
     private final SparseBooleanArray mTimedLockoutCleared;
     private final SparseIntArray mFailedAttempts;
@@ -100,6 +102,7 @@ public class LockoutFrameworkImpl implements LockoutTracker {
             @NonNull LockoutResetCallback lockoutResetCallback,
             @NonNull Function<Integer, PendingIntent> lockoutResetIntent,
             @Nullable Handler handler) {
+        mContext = context;
         mLockoutResetCallback = lockoutResetCallback;
         mTimedLockoutCleared = new SparseBooleanArray();
         mFailedAttempts = new SparseIntArray();
@@ -133,6 +136,10 @@ public class LockoutFrameworkImpl implements LockoutTracker {
 
     @Override
     public void addFailedAttemptForUser(int userId) {
+        if (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.FINGERPRINT_LOCKOUT, 0) == 1) {
+            return;
+        }
         mFailedAttempts.put(userId, mFailedAttempts.get(userId, 0) + 1);
         mTimedLockoutCleared.put(userId, false);
 
@@ -144,6 +151,10 @@ public class LockoutFrameworkImpl implements LockoutTracker {
     @Override
     @LockoutMode
     public int getLockoutModeForUser(int userId) {
+        if (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.FINGERPRINT_LOCKOUT, 0) == 1) {
+            return LOCKOUT_NONE;
+        }
         final int failedAttempts = mFailedAttempts.get(userId, 0);
         if (failedAttempts >= MAX_FAILED_ATTEMPTS_LOCKOUT_PERMANENT) {
             return LOCKOUT_PERMANENT;
