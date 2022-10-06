@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0ffef4ca_2bd50b99",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000008
+      },
+      "writtenOn": "2022-10-06T14:00:44Z",
+      "side": 1,
+      "message": "this broke gesture nav\nI\u0027m getting 2-Button gesture navigation instead",
+      "revId": "fedd7fe34fc07ed74554c082aac66f9ece353acf",
+      "serverId": "b49086b3-c06c-47ea-b69e-65c8379e1be6"
+    }
+  ]
+}
