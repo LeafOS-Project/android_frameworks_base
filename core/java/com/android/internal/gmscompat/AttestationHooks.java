@@ -31,7 +31,7 @@ public final class AttestationHooks {
     private static final String PROCESS_UNSTABLE = "com.google.android.gms.unstable";
     private static final String PACKAGE_FINSKY = "com.android.vending";
     private static final String SAMSUNG = "com.samsung.android.";
-    private static final String FAKE_FINGERPRINT = "google/raven/raven:13/TP1A.221005.002/9012097:user/release-keys";
+    private static final String FAKE_FINGERPRINT = "google/cheetah/cheetah:13/TD1A.221105.001/9104446:user/release-keys";
 
     private static volatile boolean sIsGms = false;
 
