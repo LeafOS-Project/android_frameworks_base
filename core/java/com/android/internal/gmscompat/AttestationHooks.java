@@ -66,17 +66,6 @@ public final class AttestationHooks {
         setBuildField("PRODUCT", "raven");
     }
 
-    public static String maybeSpoofProperty(String key) {
-        if (sIsGms) {
-            switch (key) {
-                case "ro.vendor.build.fingerprint": return Build.FINGERPRINT;
-                case "ro.vendor.build.security_patch": return Build.VERSION.SECURITY_PATCH;
-                default: return null;
-            }
-        }
-        return null;
-    }
-
     public static void initApplicationBeforeOnCreate(Application app) {
         if (PACKAGE_GMS.equals(app.getPackageName())
                 && PROCESS_UNSTABLE.equals(Application.getProcessName())
