@@ -24,7 +24,6 @@ import android.util.Log;
 import android.util.MutableInt;
 
 import com.android.internal.annotations.GuardedBy;
-import com.android.internal.gmscompat.AttestationHooks;
 
 import dalvik.annotation.optimization.CriticalNative;
 import dalvik.annotation.optimization.FastNative;
@@ -147,8 +146,7 @@ public class SystemProperties {
     @SystemApi
     public static String get(@NonNull String key) {
         if (TRACK_KEY_ACCESS) onKeyAccess(key);
-        String spoofed = AttestationHooks.maybeSpoofProperty(key);
-        return spoofed != null ? spoofed : native_get(key);
+        return native_get(key);
     }
 
     /**
@@ -164,7 +162,6 @@ public class SystemProperties {
     @SystemApi
     public static String get(@NonNull String key, @Nullable String def) {
         if (TRACK_KEY_ACCESS) onKeyAccess(key);
-        String spoofed = AttestationHooks.maybeSpoofProperty(key);
         return native_get(key, def);
     }
 
