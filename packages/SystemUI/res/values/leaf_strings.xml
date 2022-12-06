@@ -51,4 +51,7 @@
     <!-- 4G icon -->
     <string name="show_fourg_icon_title">4G icon</string>
     <string name="show_fourg_icon_summary">Show 4G instead of LTE icon in statusbar</string>
+
+    <!-- Name of the network traffic indicator on status bar. -->
+    <string name="status_bar_network_traffic">Real-time internet speed</string>
 </resources>
