@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c88b2fcc_dca71440",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-12-15T07:47:05Z",
+      "side": 1,
+      "message": "modules/Connectivity can no longer access it",
+      "revId": "7f86727b7d76ab668a6be4a9a1d554d3ddafe2a0",
+      "serverId": "b49086b3-c06c-47ea-b69e-65c8379e1be6"
+    }
+  ]
+}
