@@ -18,7 +18,6 @@ package com.android.internal.gmscompat;
 
 import android.app.Application;
 import android.os.Build;
-import android.os.SystemProperties;
 import android.util.Log;
 
 import java.lang.reflect.Field;
@@ -29,7 +28,6 @@ public final class AttestationHooks {
     private static final String TAG = "GmsCompat/Attestation";
     private static final String PACKAGE_GMS = "com.google.android.gms";
     private static final String PROCESS_UNSTABLE = "com.google.android.gms.unstable";
-    private static final String PACKAGE_FINSKY = "com.android.vending";
     private static final String SAMSUNG = "com.samsung.android.";
     private static final String FAKE_FINGERPRINT = "google/angler/angler:6.0/MDB08L/2343525:user/release-keys";
 
@@ -53,26 +51,21 @@ public final class AttestationHooks {
         }
     }
 
-    private static void spoofBuildGms() {
-        // Alter model name to avoid hardware attestation enforcement
-        setBuildField("MODEL", Build.MODEL + " ");
-        setBuildField("FINGERPRINT", FAKE_FINGERPRINT);
-        setBuildField("TAGS", "release-keys");
-        setBuildField("TYPE", "user");
-        setBuildField("IS_DEBUGGABLE", false);
-        setBuildField("BRAND", "google");
-        setBuildField("MANUFACTURER", "google");
-        setBuildField("DEVICE", "raven");
-        setBuildField("PRODUCT", "raven");
-    }
-
     public static void initApplicationBeforeOnCreate(Application app) {
-        if (PACKAGE_GMS.equals(app.getPackageName())
-                && PROCESS_UNSTABLE.equals(Application.getProcessName())
-                || PACKAGE_FINSKY.equals(app.getPackageName())
-                || app.getPackageName().startsWith(SAMSUNG)) {
-            sIsGms = true;
-            spoofBuildGms();
+        String packageName = app.getPackageName();
+        String processName = Application.getProcessName();
+
+        if (PACKAGE_GMS.equals(packageName)
+                && PROCESS_UNSTABLE.equals(processName)) {
+          sIsGms = true;
+          setBuildField("MODEL", Build.MODEL + " ");
+          setBuildField("FINGERPRINT", FAKE_FINGERPRINT);
+        }
+
+        // Samsung apps like SmartThings, Galaxy Wearable crashes on samsung devices running AOSP
+        if (packageName.startsWith(SAMSUNG)) {
+          setBuildField("BRAND", "google");
+          setBuildField("MANUFACTURER", "google");
         }
     }
 
