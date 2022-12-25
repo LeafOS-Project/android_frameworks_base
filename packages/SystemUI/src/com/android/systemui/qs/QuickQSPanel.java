@@ -27,10 +27,13 @@ import android.widget.LinearLayout;
 import com.android.internal.logging.UiEventLogger;
 import com.android.systemui.Dependency;
 import com.android.systemui.R;
+import com.android.systemui.flags.FeatureFlags;
+import com.android.systemui.flags.Flags;
 import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.plugins.qs.QSTile.SignalState;
 import com.android.systemui.plugins.qs.QSTile.State;
 import com.android.systemui.tuner.TunerService;
+import com.android.systemui.util.LargeScreenUtils;
 
 /**
  * Version of QSPanel that only shows N Quick Tiles in the QS Header.
@@ -49,6 +52,7 @@ public class QuickQSPanel extends QSPanel implements TunerService.Tunable {
 
     private boolean mDisabledByPolicy;
     private int mMaxTiles;
+    private FeatureFlags mFeatureFlags;
 
     public QuickQSPanel(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -56,6 +60,7 @@ public class QuickQSPanel extends QSPanel implements TunerService.Tunable {
         mMaxColumnsPortrait = getResources().getInteger(R.integer.quick_qs_panel_num_columns);
         mMaxColumnsLandscape = getResources().getInteger(R.integer.quick_qs_panel_num_columns_landscape);
         mMaxColumnsMediaPlayer = getResources().getInteger(R.integer.quick_qs_panel_num_columns_media);
+        mFeatureFlags = Dependency.get(FeatureFlags.class);
     }
 
     @Override
@@ -134,7 +139,12 @@ public class QuickQSPanel extends QSPanel implements TunerService.Tunable {
 
     @Override
     protected void updatePadding() {
-        int bottomPadding = getResources().getDimensionPixelSize(R.dimen.qqs_layout_padding_bottom);
+        boolean useLargeScreenShadeHeader =
+                LargeScreenUtils.shouldUseLargeScreenShadeHeader(getResources());
+        boolean useCombinedHeaders = mFeatureFlags.isEnabled(Flags.COMBINED_QS_HEADERS);
+        int bottomPadding = getResources().getDimensionPixelSize(useLargeScreenShadeHeader
+                || !useCombinedHeaders ? R.dimen.qqs_layout_padding_bottom
+                : R.dimen.qqs_layout_padding_bottom_combined_headers);
         setPaddingRelative(getPaddingStart(),
                 getPaddingTop(),
                 getPaddingEnd(),
