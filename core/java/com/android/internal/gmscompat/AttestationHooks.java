@@ -31,6 +31,8 @@ public final class AttestationHooks {
     private static final String SAMSUNG = "com.samsung.android.";
     private static final String FAKE_FINGERPRINT = "google/angler/angler:6.0/MDB08L/2343525:user/release-keys";
 
+    private static final long PATCH_DURATION = 2000L;
+
     private static volatile boolean sIsGms = false;
 
     private AttestationHooks() { }
@@ -59,13 +61,34 @@ public final class AttestationHooks {
                 && PROCESS_UNSTABLE.equals(processName)) {
           sIsGms = true;
           setBuildField("MODEL", Build.MODEL + " ");
-          setBuildField("FINGERPRINT", FAKE_FINGERPRINT);
         }
 
         // Samsung apps like SmartThings, Galaxy Wearable crashes on samsung devices running AOSP
         if (packageName.startsWith(SAMSUNG)) {
           setBuildField("BRAND", "google");
           setBuildField("MANUFACTURER", "google");
+        }
+    }
+
+    public static void patchBuildFp(String type) {
+        Log.d(TAG, "Get service - algorithm=" + type);
+        if (sIsGms && "KeyStore".equals(type)) {
+            String originalFp = Build.FINGERPRINT;
+            Log.d(TAG, "Patch build for KeyStore " + originalFp + " -> " + FAKE_FINGERPRINT);
+            setBuildField("FINGERPRINT", FAKE_FINGERPRINT);
+
+            Thread thread = new Thread(() -> {
+                try {
+                    Thread.sleep(PATCH_DURATION);
+                    Log.d(TAG,
+                            "Unpatch build for KeyStore " + FAKE_FINGERPRINT + " -> " + originalFp);
+                    setBuildField("FINGERPRINT", originalFp);
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "Error while sleeping", e);
+                }
+            });
+            thread.setDaemon(true);
+            thread.start();
         }
     }
 
