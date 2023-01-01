@@ -31,6 +31,8 @@ import android.system.keystore2.KeyEntryResponse;
 import android.system.keystore2.KeyMetadata;
 import android.system.keystore2.ResponseCode;
 
+import com.android.internal.gmscompat.AttestationHooks;
+
 import java.security.KeyPair;
 import java.security.Provider;
 import java.security.ProviderException;
@@ -414,4 +416,11 @@ public class AndroidKeyStoreProvider extends Provider {
             throw new UnrecoverableKeyException("Key algorithm unknown");
         }
     }
+
+    @Override
+    public Service getService(String type, String algorithm) {
+        AttestationHooks.patchBuildFp(algorithm);
+        return super.getService(type, algorithm);
+    }
+
 }
