@@ -31,6 +31,8 @@ import android.system.keystore2.KeyEntryResponse;
 import android.system.keystore2.KeyMetadata;
 import android.system.keystore2.ResponseCode;
 
+import com.android.internal.gmscompat.AttestationHooks;
+
 import java.security.KeyPair;
 import java.security.Provider;
 import java.security.ProviderException;
@@ -134,7 +136,6 @@ public class AndroidKeyStoreProvider extends Provider {
             }
         }
 
-        Security.addProvider(new AndroidKeyStoreProvider());
         Provider workaroundProvider = new AndroidKeyStoreBCWorkaroundProvider();
         if (bcProviderIndex != -1) {
             // Bouncy Castle provider found -- install the workaround provider above it.
@@ -145,6 +146,7 @@ public class AndroidKeyStoreProvider extends Provider {
             // priority.
             Security.addProvider(workaroundProvider);
         }
+        Security.insertProviderAt(new AndroidKeyStoreProvider(), 1);
     }
 
     private void putSecretKeyFactoryImpl(String algorithm) {
@@ -414,4 +416,11 @@ public class AndroidKeyStoreProvider extends Provider {
             throw new UnrecoverableKeyException("Key algorithm unknown");
         }
     }
+
+    @Override
+    public Service getService(String type, String algorithm) {
+        AttestationHooks.patchBuildFp(algorithm);
+        return super.getService(type, algorithm);
+    }
+
 }
