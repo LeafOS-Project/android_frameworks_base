@@ -17,6 +17,7 @@
 package com.android.systemui.leaf
 
 import com.android.systemui.qs.tileimpl.QSTileImpl
+import com.android.systemui.qs.tiles.BluetoothStockTile
 import com.android.systemui.qs.tiles.CaffeineTile
 import com.android.systemui.qs.tiles.CellularTile
 import com.android.systemui.qs.tiles.CompassTile
@@ -30,6 +31,12 @@ import dagger.multibindings.StringKey
 
 @Module
 interface LeafModule {
+    /** Inject BluetoothStockTile into tileMap in QSModule */
+    @Binds
+    @IntoMap
+    @StringKey(BluetoothStockTile.TILE_SPEC)
+    fun bindBluetoothStockTile(bluetoothStockTile: BluetoothStockTile): QSTileImpl<*>
+
     /** Inject CaffeineTile into tileMap in QSModule */
     @Binds
     @IntoMap
