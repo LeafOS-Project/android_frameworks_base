@@ -21,10 +21,12 @@
     <string name="global_action_restart_system">Сістэма</string>
     <string name="global_action_restart_recovery">Аднаўленне</string>
     <string name="global_action_restart_bootloader">Загрузчык</string>
+    <string name="global_action_restart_download">Спампоўванне</string>
     <string name="global_action_restart_fastboot">Fastbootd</string>
     <string name="global_action_restart_progress">Перазапуск\u2026</string>
     <string name="global_action_restart_recovery_progress">Перазапуск у рэжым аднаўлення\u2026</string>
     <string name="global_action_restart_bootloader_progress">Перазапуск у рэжым загрузчыка\u2026</string>
+    <string name="global_action_restart_download_progress">Перазапуск у рэжым пампавання\u2026</string>
     <string name="global_action_restart_fastboot_progress">Перазапуск у рэжым fastbootd\u2026</string>
     <string name="quick_settings_powershare_label">Бесправадны PowerShare</string>
     <string name="quick_settings_powershare_off_powersave_label">Бесправадны PowerShare выключаны\nЭканомія акумулятара</string>
