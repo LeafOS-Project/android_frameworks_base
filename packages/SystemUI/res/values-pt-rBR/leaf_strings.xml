@@ -1,2 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="quick_settings_compass_label">Bússola</string>
+    <string name="quick_settings_compass_value"><xliff:g id="degrees">%1$.0f</xliff:g>° <xliff:g id="direction">%2$s</xliff:g></string>
+    <string name="quick_settings_compass_init">Inicializando…</string>
+    <string name="accessibility_quick_settings_compass_off">Bússola desligada</string>
+    <string name="accessibility_quick_settings_compass_on">Bússola ligada</string>
+    <string name="accessibility_quick_settings_compass_changed_off">Bússola desligada</string>
+    <string name="accessibility_quick_settings_compass_changed_on">Bússola ativada</string>
+    <string name="quick_settings_compass_N">N</string>
+    <string name="quick_settings_compass_NE">NE</string>
+    <string name="quick_settings_compass_E">L</string>
+    <string name="quick_settings_compass_SE">SE</string>
+    <string name="quick_settings_compass_S">S</string>
+    <string name="quick_settings_compass_SW">SO</string>
+    <string name="quick_settings_compass_W">O</string>
+    <string name="quick_settings_compass_NW">NO</string>
+    <string name="qs_data_switch_label">Mudar cartão de dados</string>
+    <string name="qs_data_switch_toast_0">Atualmente nenhum cartão SIM está inserido</string>
+    <string name="qs_data_switch_toast_1">Atualmente apenas um cartão SIM está inserido</string>
+    <string name="qs_data_switch_text_1">SIM 1</string>
+    <string name="qs_data_switch_text_2">SIM 2</string>
+    <string name="qs_data_switch_changed_1">Cartão de dados alterado para o SIM 1.</string>
+    <string name="qs_data_switch_changed_2">Cartão de dados alterado para o SIM 2.</string>
+    <string name="usage_data">usado hoje</string>
+    <string name="usage_data_default_suffix">Dados móveis</string>
+    <string name="usage_wifi_default_suffix">Wi-Fi</string>
+    <plurals name="quick_settings_internet_hotspot_summary_num_devices">
+        <item quantity="one">%d dispositivo conectado</item>
+        <item quantity="many">%d dispositivos conectados</item>
+        <item quantity="other">%d dispositivos conectados</item>
+    </plurals>
+</resources>
