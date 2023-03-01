@@ -214,6 +214,8 @@ import com.android.server.wm.ActivityTaskManagerService;
 import com.android.server.wm.WindowManagerGlobalLock;
 import com.android.server.wm.WindowManagerService;
 
+import com.android.server.lineage.health.HealthInterfaceService;
+
 import dalvik.system.VMRuntime;
 
 import java.io.File;
@@ -2520,6 +2522,13 @@ public final class SystemServer implements Dumpable {
             t.traceBegin("StartMediaMetricsManager");
             mSystemServiceManager.startService(MediaMetricsManagerService.class);
             t.traceEnd();
+
+            // LineageHardware
+            if (!mOnlyCore) {
+                t.traceBegin("StartHealthService");
+                mSystemServiceManager.startService(HealthInterfaceService.class);
+                t.traceEnd();
+            }
         }
 
         t.traceBegin("StartMediaProjectionManager");
