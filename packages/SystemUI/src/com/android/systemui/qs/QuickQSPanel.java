@@ -30,6 +30,7 @@ import com.android.systemui.R;
 import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.plugins.qs.QSTile.SignalState;
 import com.android.systemui.plugins.qs.QSTile.State;
+import com.android.systemui.qs.logging.QSLogger;
 import com.android.systemui.tuner.TunerService;
 
 /**
@@ -106,8 +107,8 @@ public class QuickQSPanel extends QSPanel implements TunerService.Tunable {
     }
 
     @Override
-    void initialize() {
-        super.initialize();
+    void initialize(QSLogger qsLogger) {
+        super.initialize(qsLogger);
         if (mHorizontalContentContainer != null) {
             mHorizontalContentContainer.setClipChildren(false);
         }

@@ -37,6 +37,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.pm.UserInfo;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.os.UserManager;
 import android.provider.Settings;
