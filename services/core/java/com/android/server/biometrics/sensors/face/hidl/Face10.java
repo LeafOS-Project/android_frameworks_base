@@ -426,6 +426,17 @@ public class Face10 implements IHwBinder.DeathRecipient, ServiceProvider {
         }
 
         if (mDaemon == null) {
+            try {
+                mDaemon = IBiometricsFace.getService("lmodroid");
+            } catch (java.util.NoSuchElementException e) {
+                // Service doesn't exist or cannot be opened.
+                Slog.w(TAG, "NoSuchElementException", e);
+            } catch (RemoteException e) {
+                Slog.e(TAG, "Failed to get lmodroid face HAL", e);
+            }
+        }
+
+        if (mDaemon == null) {
             Slog.w(TAG, "Face HAL not available");
             return null;
         }
