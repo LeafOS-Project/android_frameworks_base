@@ -60,6 +60,7 @@ import com.android.systemui.statusbar.phone.dagger.StatusBarViewModule.LARGE_SCR
 import com.android.systemui.statusbar.phone.dagger.StatusBarViewModule.LARGE_SCREEN_SHADE_HEADER
 import com.android.systemui.statusbar.policy.Clock
 import com.android.systemui.statusbar.policy.ConfigurationController
+import com.android.systemui.statusbar.policy.NetworkTraffic
 import com.android.systemui.statusbar.policy.VariableDateView
 import com.android.systemui.statusbar.policy.VariableDateViewController
 import com.android.systemui.util.ViewController
@@ -132,6 +133,7 @@ class LargeScreenShadeHeaderController @Inject constructor(
     private val date: TextView = header.findViewById(R.id.date)
     private val iconContainer: StatusIconContainer = header.findViewById(R.id.statusIcons)
     private val qsCarrierGroup: QSCarrierGroup = header.findViewById(R.id.carrier_group)
+    private val networkTraffic: NetworkTraffic = header.findViewById(R.id.networkTraffic)
 
     private var cutoutLeft = 0
     private var cutoutRight = 0
@@ -233,6 +235,7 @@ class LargeScreenShadeHeaderController @Inject constructor(
                     .privacyChipVisibilityConstraints(visible)
                 header.updateAllConstraints(update)
             }
+            setNetworkTrafficVisible(qsExpandedFraction == 1f)
         }
     }
 
@@ -301,6 +304,7 @@ class LargeScreenShadeHeaderController @Inject constructor(
         if (combinedHeaders) {
             privacyIconsController.onParentVisible()
         }
+        setNetworkTrafficVisible(false)
     }
 
     override fun onViewAttached() {
@@ -462,6 +466,7 @@ class LargeScreenShadeHeaderController @Inject constructor(
             logInstantEvent("updatePosition: $qsExpandedFraction")
             header.progress = qsExpandedFraction
         }
+        setNetworkTrafficVisible(qsExpandedFraction == 1f)
     }
 
     private fun logInstantEvent(message: String) {
@@ -513,6 +518,7 @@ class LargeScreenShadeHeaderController @Inject constructor(
             date.setTextColor(textColorPrimary)
             qsCarrierGroup.updateColors(textColorPrimary, colorStateList)
             batteryIcon.updateColors(textColorPrimary, textColorSecondary, textColorPrimary)
+            networkTraffic.setTintColor(textColorPrimary)
         }
     }
 
@@ -529,6 +535,10 @@ class LargeScreenShadeHeaderController @Inject constructor(
                 clock.paddingBottom
             )
         }
+    }
+
+    private fun setNetworkTrafficVisible(visible: Boolean) {
+        networkTraffic.setAlpha(if (visible) 1f else 0f)
     }
 
     override fun dump(pw: PrintWriter, args: Array<out String>) {
