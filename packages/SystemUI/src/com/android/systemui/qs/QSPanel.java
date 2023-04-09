@@ -136,6 +136,12 @@ public class QSPanel extends LinearLayout implements Tunable {
         mMaxColumnsPortrait = getResources().getInteger(R.integer.qs_panel_num_columns);
         mMaxColumnsLandscape = getResources().getInteger(R.integer.qs_panel_num_columns_landscape);
         mMaxColumnsMediaPlayer = getResources().getInteger(R.integer.qs_panel_num_columns_media);
+
+        mMaxColumnsPortrait = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.QS_NUM_COLUMNS,
+                mMaxColumnsPortrait);
+        mMaxColumnsLandscape = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.QS_NUM_COLUMNS_LANDSCAPE,
+                mMaxColumnsLandscape);
+
         mContext = context;
 
         setOrientation(VERTICAL);

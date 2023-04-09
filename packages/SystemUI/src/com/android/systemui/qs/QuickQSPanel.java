@@ -19,6 +19,7 @@ package com.android.systemui.qs;
 import android.annotation.NonNull;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -57,6 +58,11 @@ public class QuickQSPanel extends QSPanel implements TunerService.Tunable {
         mMaxColumnsPortrait = getResources().getInteger(R.integer.quick_qs_panel_num_columns);
         mMaxColumnsLandscape = getResources().getInteger(R.integer.quick_qs_panel_num_columns_landscape);
         mMaxColumnsMediaPlayer = getResources().getInteger(R.integer.quick_qs_panel_num_columns_media);
+
+        mMaxColumnsPortrait = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.QQS_NUM_COLUMNS,
+                mMaxColumnsPortrait);
+        mMaxColumnsLandscape = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.QQS_NUM_COLUMNS_LANDSCAPE,
+                mMaxColumnsLandscape);
     }
 
     @Override
@@ -333,6 +339,17 @@ public class QuickQSPanel extends QSPanel implements TunerService.Tunable {
             }
             setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_AUTO);
             mLastSelected = selected;
+        }
+
+        @Override
+        public boolean updateColumns() {
+            super.updateColumns();
+            // QQS has only one row, to ensure expansion animation plays
+            // with the correct QSTile we need to drop any extra QSTiles
+            // from the list
+            for (int i = mColumns; i < mRecords.size(); i++) {
+                removeTile(mRecords.get(i));
+            }
         }
     }
 }
