@@ -45,7 +45,6 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
     private final boolean mLessRows;
     private int mMinRows = 1;
     private int mMaxColumns = NO_MAX_COLUMNS;
-    protected int mResourceColumns;
     private float mSquishinessFraction = 1f;
     protected int mLastTileBottom;
 
@@ -95,6 +94,11 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
         return updateColumns();
     }
 
+    @Override
+    public int getMaxColumns() {
+        return mMaxColumns;
+    }
+
     public void addTile(TileRecord tile) {
         mRecords.add(tile);
         tile.tile.setListening(this, mListening);
@@ -122,7 +126,6 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
 
     public boolean updateResources() {
         final Resources res = mContext.getResources();
-        mResourceColumns = Math.max(1, res.getInteger(R.integer.quick_qs_panel_max_tiles));
         mMaxCellHeight = mContext.getResources().getDimensionPixelSize(mCellHeightResId);
         mCellMarginHorizontal = res.getDimensionPixelSize(R.dimen.qs_tile_margin_horizontal);
         mSidePadding = useSidePadding() ? mCellMarginHorizontal / 2 : 0;
@@ -142,7 +145,7 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
 
     public boolean updateColumns() {
         int oldColumns = mColumns;
-        mColumns = Math.min(mResourceColumns, mMaxColumns);
+        mColumns = mMaxColumns;
         return oldColumns != mColumns;
     }
 
