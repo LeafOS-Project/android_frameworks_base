@@ -95,6 +95,11 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
         return updateColumns();
     }
 
+    @Override
+    public int getMaxColumns() {
+        return mMaxColumns;
+    }
+
     public void addTile(TileRecord tile) {
         mRecords.add(tile);
         tile.tile.setListening(this, mListening);
@@ -142,7 +147,10 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
 
     public boolean updateColumns() {
         int oldColumns = mColumns;
-        mColumns = Math.min(mResourceColumns, mMaxColumns);
+        if (isRoundQS())
+            mColumns = mMaxColumns;
+        else
+            mColumns = Math.min(mResourceColumns, mMaxColumns);
         return oldColumns != mColumns;
     }
 
