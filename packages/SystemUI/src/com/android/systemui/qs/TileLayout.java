@@ -95,6 +95,11 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
         return updateColumns();
     }
 
+    @Override
+    public int getMaxColumns() {
+        return mMaxColumns;
+    }
+
     public void addTile(TileRecord tile) {
         mRecords.add(tile);
         tile.tile.setListening(this, mListening);
