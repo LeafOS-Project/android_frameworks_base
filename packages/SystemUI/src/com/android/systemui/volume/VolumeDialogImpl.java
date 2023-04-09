@@ -1281,7 +1281,7 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
 
         if (mExpandRowsView != null) {
             mExpandRowsView.setVisibility(mDeviceProvisionedController.isCurrentUserSetup()
-                    && mActivityManager.getLockTaskModeState() == LOCK_TASK_MODE_NONE
+                    && lockTaskModeState == LOCK_TASK_MODE_NONE
                     ? VISIBLE : GONE);
         }
         if (mExpandRows != null) {
