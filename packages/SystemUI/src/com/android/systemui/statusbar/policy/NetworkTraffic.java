@@ -54,7 +54,6 @@ public class NetworkTraffic extends TextView {
     private long totalRxBytes;
     private long totalTxBytes;
     private long lastUpdateTime;
-    private int mAutoHideThreshold;
     protected int mTintColor;
 
     private boolean mScreenOn = true;
@@ -170,9 +169,7 @@ public class NetworkTraffic extends TextView {
         private boolean shouldHide(long rxData, long txData, long timeDelta) {
             long speedRxKB = (long)(rxData / (timeDelta / 1000f)) / KB;
             long speedTxKB = (long)(txData / (timeDelta / 1000f)) / KB;
-            return !getConnectAvailable() ||
-                    (speedRxKB < mAutoHideThreshold &&
-                    speedTxKB < mAutoHideThreshold);
+            return !getConnectAvailable();
         }
 
         private boolean shouldShowUpload(long rxData, long txData, long timeDelta) {
@@ -184,7 +181,7 @@ public class NetworkTraffic extends TextView {
     };
 
     protected boolean restoreViewQuickly() {
-        return getConnectAvailable() && mAutoHideThreshold == 0;
+        return getConnectAvailable();
     }
 
     protected void makeVisible() {
@@ -271,9 +268,6 @@ public class NetworkTraffic extends TextView {
             resolver.registerContentObserver(Settings.System
                     .getUriFor(Settings.System.NETWORK_TRAFFIC_STATE), false,
                     this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD), false,
-                    this, UserHandle.USER_ALL);
         }
 
         /*
@@ -315,9 +309,7 @@ public class NetworkTraffic extends TextView {
                 totalTxBytes = TrafficStats.getTotalTxBytes();
                 mTrafficHandler.sendEmptyMessage(1);
             }
-            if (mAutoHideThreshold == 0)
                 makeVisible();
-            return;
         }
         clearHandlerCallbacks();
         setVisibility(View.GONE);
@@ -329,9 +321,6 @@ public class NetworkTraffic extends TextView {
         mIsEnabled = Settings.System.getIntForUser(resolver,
                 Settings.System.NETWORK_TRAFFIC_STATE, 0,
                 UserHandle.USER_CURRENT) == 1;
-        mAutoHideThreshold = Settings.System.getIntForUser(resolver,
-                Settings.System.NETWORK_TRAFFIC_AUTOHIDE_THRESHOLD, 1,
-                UserHandle.USER_CURRENT);
         setGravity(Gravity.CENTER);
         setMaxLines(2);
         setSpacingAndFonts();
