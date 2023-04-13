@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5851c6cf_430b2476",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-04-13T15:22:38Z",
+      "side": 1,
+      "message": "I don\u0027t think we really want this\nIt won\u0027t have any impact on the ROM\u0027s size and as for the repo size these files will still be stuck in the commit history forever so does it really make that much of a difference?\nSame applies for the follow-up commit",
+      "revId": "16551dac3a81d328007020531f05a68cc5eebbda",
+      "serverId": "b49086b3-c06c-47ea-b69e-65c8379e1be6"
+    }
+  ]
+}
