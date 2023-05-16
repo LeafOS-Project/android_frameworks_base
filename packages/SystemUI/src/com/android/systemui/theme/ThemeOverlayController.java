@@ -480,6 +480,23 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
                 UserHandle.USER_ALL);
 
         mSecureSettings.registerContentObserverForUser(
+                Settings.Secure.getUriFor(Settings.Secure.QS_UI_STYLE),
+                false,
+                new ContentObserver(mBgHandler) {
+                    @Override
+                    public void onChange(boolean selfChange, Collection<Uri> collection, int flags,
+                            int userId) {
+                        boolean qsStyle = Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                            Settings.Secure.QS_UI_STYLE, 0,
+                            UserHandle.USER_CURRENT) == 1;
+                        mThemeManager.enableOverlay("com.android.systemui.qs_style.round", qsStyle);
+
+                        reevaluateSystemTheme(true /* forceReload */);
+                    }
+                },
+                UserHandle.USER_ALL);
+
+        mSecureSettings.registerContentObserverForUser(
                 Settings.Secure.getUriFor(Settings.Secure.QS_BRIGHTNESS_SLIDER_POSITION),
                 false,
                 new ContentObserver(mBgHandler) {

@@ -63,6 +63,8 @@ public class QSPanel extends LinearLayout implements Tunable {
             Settings.Secure.QS_SHOW_BRIGHTNESS_SLIDER;
     public static final String QS_BRIGHTNESS_SLIDER_POSITION =
             Settings.Secure.QS_BRIGHTNESS_SLIDER_POSITION;
+    public static final String QS_UI_STYLE =
+            Settings.Secure.QS_UI_STYLE;
 
     private static final String TAG = "QSPanel";
 
