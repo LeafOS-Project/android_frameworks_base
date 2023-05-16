@@ -76,6 +76,7 @@ import com.android.systemui.statusbar.policy.ConfigurationController.Configurati
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController.DeviceProvisionedListener;
 import com.android.systemui.util.settings.SecureSettings;
+import com.android.internal.util.systemui.qs.QSLayoutUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -474,6 +475,21 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
                             mDeferredThemeEvaluation = true;
                             return;
                         }
+                        reevaluateSystemTheme(true /* forceReload */);
+                    }
+                },
+                UserHandle.USER_ALL);
+
+        mSecureSettings.registerContentObserverForUser(
+                Settings.Secure.getUriFor(Settings.Secure.QS_UI_STYLE),
+                false,
+                new ContentObserver(mBgHandler) {
+                    @Override
+                    public void onChange(boolean selfChange, Collection<Uri> collection, int flags,
+                            int userId) {
+                        mThemeManager.enableOverlay("com.android.systemui.qs_style.round",
+                                QSLayoutUtils.isRoundQS(mContext));
+
                         reevaluateSystemTheme(true /* forceReload */);
                     }
                 },
