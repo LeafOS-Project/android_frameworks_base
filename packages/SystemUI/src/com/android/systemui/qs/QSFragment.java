@@ -21,6 +21,7 @@ import static com.android.systemui.media.dagger.MediaModule.QUICK_QS_PANEL;
 import static com.android.systemui.statusbar.DisableFlagsLogger.DisableState;
 import static com.android.systemui.statusbar.StatusBarState.KEYGUARD;
 import static com.android.systemui.statusbar.StatusBarState.SHADE_LOCKED;
+import static com.android.systemui.util.qs.QSStyleUtils.QS_STYLE_ROUND;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -28,6 +29,7 @@ import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Trace;
+import android.provider.Settings;
 import android.util.IndentingPrintWriter;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -68,6 +70,7 @@ import com.android.systemui.statusbar.phone.KeyguardBypassController;
 import com.android.systemui.statusbar.policy.BrightnessMirrorController;
 import com.android.systemui.statusbar.policy.RemoteInputQuickSettingsDisabler;
 import com.android.systemui.util.LifecycleFragment;
+import com.android.systemui.tuner.TunerService;
 
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -77,7 +80,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Callbacks,
-        StatusBarStateController.StateListener, Dumpable {
+        StatusBarStateController.StateListener, Dumpable, TunerService.Tunable {
     private static final String TAG = "QS";
     private static final boolean DEBUG = false;
     private static final String EXTRA_EXPANDED = "expanded";
@@ -109,6 +112,7 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
     private boolean mQsDisabled;
     private int[] mLocationTemp = new int[2];
     private int mQSPanelScrollY = 0;
+    private boolean mIsRoundQS;
 
     private final RemoteInputQuickSettingsDisabler mRemoteInputQuickSettingsDisabler;
     private final MediaHost mQsMediaHost;
@@ -175,6 +179,8 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
      */
     private boolean mIsNotificationPanelFullWidth;
 
+    private final TunerService mTunerService;
+
     @Inject
     public QSFragment(RemoteInputQuickSettingsDisabler remoteInputQsDisabler,
             QSTileHost qsTileHost,
@@ -186,7 +192,8 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
             QSFragmentDisableFlagsLogger qsFragmentDisableFlagsLogger,
             FalsingManager falsingManager, DumpManager dumpManager, FeatureFlags featureFlags,
             FooterActionsController footerActionsController,
-            FooterActionsViewModel.Factory footerActionsViewModelFactory) {
+            FooterActionsViewModel.Factory footerActionsViewModelFactory,
+            TunerService tunerService) {
         mRemoteInputQuickSettingsDisabler = remoteInputQsDisabler;
         mQsMediaHost = qsMediaHost;
         mQqsMediaHost = qqsMediaHost;
@@ -202,6 +209,7 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
         mFooterActionsController = footerActionsController;
         mFooterActionsViewModelFactory = footerActionsViewModelFactory;
         mListeningAndVisibilityLifecycleOwner = new ListeningAndVisibilityLifecycleOwner();
+        mTunerService = tunerService;
     }
 
     @Override
@@ -241,7 +249,9 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
         mQSPanelScrollView.setOnScrollChangeListener(
                 (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
                     // Lazily update animators whenever the scrolling changes
-                    mQSPanelScrollY = scrollY;
+                    if (mIsRoundQS) {
+                        mQSPanelScrollY = scrollY;
+                    }
                     mQSAnimator.requestAnimatorUpdate();
                     mHeader.setExpandedScrollAmount(scrollY);
                     if (mScrollListener != null) {
@@ -290,6 +300,8 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
                     mQSPanelController.getMediaHost().getHostView().setAlpha(1.0f);
                     mQSAnimator.requestAnimatorUpdate();
                 });
+
+        mTunerService.addTunable(this, QS_STYLE_ROUND);
     }
 
     @Override
@@ -375,7 +387,9 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
             }
         }
         updateQsState();
-        mHeader.setExpandedScrollAmount(Math.max(mQSPanelScrollY, mQSPanelScrollView.getScrollY()));
+        if (mIsRoundQS) {
+            mHeader.setExpandedScrollAmount(Math.max(mQSPanelScrollY, mQSPanelScrollView.getScrollY()));
+        }
     }
 
     @Override
@@ -393,6 +407,13 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
     @Override
     public void setCollapsedMediaVisibilityChangedListener(Consumer<Boolean> listener) {
         mQuickQSPanelController.setMediaVisibilityChangedListener(listener);
+    }
+
+    @Override
+    public void onTuningChanged(String key, String newValue) {
+        if (QS_STYLE_ROUND.equals(key)) {
+            mIsRoundQS = TunerService.parseInteger(newValue, 1) == 1;
+        }
     }
 
     private void setEditLocation(View view) {
