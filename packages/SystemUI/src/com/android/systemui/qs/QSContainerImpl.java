@@ -23,6 +23,8 @@ import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -99,7 +101,10 @@ public class QSContainerImpl extends FrameLayout implements Dumpable {
         int availableHeight = View.MeasureSpec.getSize(heightMeasureSpec);
         int maxQs = availableHeight - layoutParams.topMargin - layoutParams.bottomMargin
                 - getPaddingBottom();
-        if (navBelow) {
+        boolean isRoundQS = Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                Settings.Secure.QS_UI_STYLE,
+                0, UserHandle.USER_CURRENT) == 1;
+        if (navBelow && isRoundQS) {
             maxQs -= getResources().getDimensionPixelSize(R.dimen.navigation_bar_height);
         }
         int padding = mPaddingLeft + mPaddingRight + layoutParams.leftMargin
