@@ -14,6 +14,8 @@
 
 package com.android.systemui.qs;
 
+import static com.android.systemui.util.qs.QSStyleUtils.isRoundQS;
+
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.annotation.NonNull;
@@ -143,6 +145,7 @@ public class QSAnimator implements QSHost.Callback, PagedTileLayout.PageListener
     private final TunerService mTunerService;
     private boolean mShowCollapsedOnKeyguard;
     private int mQQSTop;
+    private boolean mIsRoundQS;
 
     private int[] mTmpLoc1 = new int[2];
     private int[] mTmpLoc2 = new int[2];
@@ -335,6 +338,8 @@ public class QSAnimator implements QSHost.Callback, PagedTileLayout.PageListener
                     QSTileView quickTileView = mQuickQSPanelController.getTileView(tile);
                     if (quickTileView == null) continue;
 
+                    mIsRoundQS = isRoundQS(quickTileView.getContext());
+
                     getRelativePosition(mTmpLoc1, quickTileView, view);
                     getRelativePosition(mTmpLoc2, tileView, view);
                     int yOffset = mTmpLoc2[1] - mTmpLoc1[1];
@@ -362,8 +367,8 @@ public class QSAnimator implements QSHost.Callback, PagedTileLayout.PageListener
 
                     // Icons
                     translateContent(
-                            quickTileView.getIconWithBackground(),
-                            tileView.getIconWithBackground(),
+                            mIsRoundQS ? quickTileView.getIconWithBackground() : quickTileView.getIcon(),
+                            mIsRoundQS ? tileView.getIconWithBackground() : tileView.getIcon(),
                             view,
                             xOffset,
                             yOffset,
@@ -405,13 +410,13 @@ public class QSAnimator implements QSHost.Callback, PagedTileLayout.PageListener
                     // Therefore, we use a quadratic interpolator animator to animate the alpha
                     // for tiles in QQS to match.
                     quadraticInterpolatorBuilder
-                            .addFloat(quickTileView.getLabelContainer(), "alpha", 0, 1);
+                            .addFloat(mIsRoundQS ? quickTileView.getLabelContainer() : quickTileView.getSecondaryLabel(), "alpha", 0, 1);
                     nonFirstPageAlphaBuilder
-                            .addFloat(quickTileView.getLabelContainer(), "alpha", 0, 0);
+                            .addFloat(mIsRoundQS ? quickTileView.getLabelContainer() : quickTileView.getSecondaryLabel(), "alpha", 0, 0);
 
                     mAnimatedQsViews.add(tileView);
                     mAllViews.add(quickTileView);
-                    mAllViews.add(quickTileView.getLabelContainer());
+                    mAllViews.add(mIsRoundQS ? quickTileView.getLabelContainer() : quickTileView.getSecondaryLabel());
                 } else if (!isIconInAnimatedRow(count)) {
                     // Pretend there's a corresponding QQS tile (for the position) that we are
                     // expanding from.
@@ -430,8 +435,8 @@ public class QSAnimator implements QSHost.Callback, PagedTileLayout.PageListener
                     mOtherFirstPageTilesHeightAnimator.addView(tileView);
                     tileView.setClipChildren(true);
                     tileView.setClipToPadding(true);
-                    firstPageBuilder.addFloat(tileView.getLabelContainer(), "alpha", 0, 1);
-                    mAllViews.add(tileView.getLabelContainer());
+                    firstPageBuilder.addFloat(isRoundQS(tileView.getContext()) ? tileView.getLabelContainer() : tileView.getSecondaryLabel(), "alpha", 0, 1);
+                    mAllViews.add(isRoundQS(tileView.getContext()) ? tileView.getLabelContainer() : tileView.getSecondaryLabel());
                 }
 
                 mAllViews.add(tileView);

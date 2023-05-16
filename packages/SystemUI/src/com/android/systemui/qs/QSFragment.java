@@ -22,12 +22,15 @@ import static com.android.systemui.statusbar.DisableFlagsLogger.DisableState;
 import static com.android.systemui.statusbar.StatusBarState.KEYGUARD;
 import static com.android.systemui.statusbar.StatusBarState.SHADE_LOCKED;
 
+import static com.android.systemui.util.qs.QSStyleUtils.isRoundQS;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Trace;
+import android.provider.Settings;
 import android.util.IndentingPrintWriter;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -241,7 +244,9 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
         mQSPanelScrollView.setOnScrollChangeListener(
                 (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
                     // Lazily update animators whenever the scrolling changes
-                    mQSPanelScrollY = scrollY;
+                    if (isRoundQS(view.getContext())) {
+                        mQSPanelScrollY = scrollY;
+                    }
                     mQSAnimator.requestAnimatorUpdate();
                     mHeader.setExpandedScrollAmount(scrollY);
                     if (mScrollListener != null) {
@@ -375,7 +380,9 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
             }
         }
         updateQsState();
-        mHeader.setExpandedScrollAmount(Math.max(mQSPanelScrollY, mQSPanelScrollView.getScrollY()));
+        if (isRoundQS(getView().getContext())) {
+            mHeader.setExpandedScrollAmount(Math.max(mQSPanelScrollY, mQSPanelScrollView.getScrollY()));
+        }
     }
 
     @Override

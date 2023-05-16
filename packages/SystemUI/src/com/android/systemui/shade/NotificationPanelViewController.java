@@ -46,6 +46,8 @@ import static com.android.systemui.statusbar.notification.stack.StackStateAnimat
 import static com.android.systemui.util.DumpUtilsKt.asIndenting;
 import static com.android.systemui.util.kotlin.JavaAdapterKt.collectFlow;
 
+import static com.android.systemui.util.qs.QSStyleUtils.isRoundQS;
+
 import static java.lang.Float.isNaN;
 
 import android.animation.Animator;
@@ -5525,9 +5527,11 @@ public final class NotificationPanelViewController implements Dumpable {
             mView.setAccessibilityPaneTitle(determineAccessibilityPaneTitle());
         }
         mNotificationStackScrollLayoutController.setMaxTopPadding(mQsMaxExpansionHeight);
-        float qsExpansionFraction = computeQsExpansionFraction();
-        int qsPanelBottomY = calculateQsBottomPosition(qsExpansionFraction);
-        mScrimController.setQsPosition(qsExpansionFraction, qsPanelBottomY);
+        if (isRoundQS(mView.getContext())) {
+            float qsExpansionFraction = computeQsExpansionFraction();
+            int qsPanelBottomY = calculateQsBottomPosition(qsExpansionFraction);
+            mScrimController.setQsPosition(qsExpansionFraction, qsPanelBottomY);
+        }
     }
 
     private final class ConfigurationListener implements
