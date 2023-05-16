@@ -56,6 +56,7 @@ import com.android.systemui.plugins.qs.QSTile.BooleanState
 import com.android.systemui.plugins.qs.QSTileView
 import com.android.systemui.qs.logging.QSLogger
 import com.android.systemui.qs.tileimpl.QSIconViewImpl.QS_ANIM_LENGTH
+import com.android.internal.util.systemui.qs.QsStyleUtils.isRoundQS
 import java.util.Objects
 
 private const val TAG = "QSTileViewImpl"
@@ -97,22 +98,24 @@ open class QSTileViewImpl @JvmOverloads constructor(
             updateHeight()
         }
 
+    private val mIsRoundQS: Boolean = isRoundQS(context)
+
     private val colorActive = Utils.getColorAttrDefaultColor(context,
             android.R.attr.colorAccent)
     private val colorInactive = Utils.getColorAttrDefaultColor(context, R.attr.offStateColor)
     private val colorUnavailable = Utils.applyAlpha(UNAVAILABLE_ALPHA, colorInactive)
 
-    private val colorLabelActive =
-            Utils.getColorAttrDefaultColor(context, com.android.internal.R.attr.textColorPrimary)
+    private val colorLabelActive = Utils.getColorAttrDefaultColor(context,
+            if (mIsRoundQS) com.android.internal.R.attr.textColorPrimary else com.android.internal.R.attr.textColorPrimaryInverse)
     private val colorLabelInactive =
-            Utils.getColorAttrDefaultColor(context, android.R.attr.textColorSecondary)
+            Utils.getColorAttrDefaultColor(context, if (mIsRoundQS) android.R.attr.textColorSecondary else android.R.attr.textColorPrimary)
     private val colorLabelUnavailable =
         Utils.getColorAttrDefaultColor(context, com.android.internal.R.attr.textColorTertiary)
 
     private val colorSecondaryLabelActive =
-            Utils.getColorAttrDefaultColor(context, android.R.attr.textColorSecondary)
+            Utils.getColorAttrDefaultColor(context, if (mIsRoundQS) android.R.attr.textColorSecondary else android.R.attr.textColorSecondaryInverse)
     private val colorSecondaryLabelInactive =
-            Utils.getColorAttrDefaultColor(context, android.R.attr.textColorTertiary)
+            Utils.getColorAttrDefaultColor(context, if (mIsRoundQS) com.android.internal.R.attr.textColorTertiary else android.R.attr.textColorSecondary)
     private val colorSecondaryLabelUnavailable =
         Utils.getColorAttrDefaultColor(context, com.android.internal.R.attr.textColorTertiary)
 
@@ -171,30 +174,47 @@ open class QSTileViewImpl @JvmOverloads constructor(
 
     init {
         setId(generateViewId())
-        orientation = LinearLayout.VERTICAL
-        gravity = Gravity.CENTER
+        if (mIsRoundQS) {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+        } else {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL or Gravity.START
+        }
         importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
         clipChildren = false
         clipToPadding = false
         isFocusable = true
-        background = null
+        background = if (mIsRoundQS) null else createTileBackground()
 
-        val iconContainerSize = context.resources.getDimensionPixelSize(R.dimen.qs_quick_tile_size)
-        radiusActive = iconContainerSize / 2f
-        radiusInactive = iconContainerSize / 4f
-        iconContainer = LinearLayout(context)
-        iconContainer.layoutParams = LayoutParams(iconContainerSize, iconContainerSize)
-        iconContainer.clipChildren = false
-        iconContainer.clipToPadding = false
-        iconContainer.orientation = LinearLayout.VERTICAL
-        iconContainer.gravity = Gravity.CENTER
-        iconContainer.background = createTileBackground()
+        if (mIsRoundQS) {
+            val iconContainerSize = context.resources.getDimensionPixelSize(R.dimen.qs_quick_tile_size)
+            radiusActive = iconContainerSize / 2f
+            radiusInactive = iconContainerSize / 4f
+            iconContainer = LinearLayout(context)
+            iconContainer.layoutParams = LayoutParams(iconContainerSize, iconContainerSize)
+            iconContainer.clipChildren = false
+            iconContainer.clipToPadding = false
+            iconContainer.orientation = LinearLayout.VERTICAL
+            iconContainer.gravity = Gravity.CENTER
+            iconContainer.background = createTileBackground()
+        }
+
         setColor(getBackgroundColorForState(QSTile.State.DEFAULT_STATE))
-        setCornerRadius(getCornerRadiusForState(QSTile.State.DEFAULT_STATE))
 
         val iconSize = context.resources.getDimensionPixelSize(R.dimen.qs_icon_size)
-        iconContainer.addView(_icon, LayoutParams(iconSize, iconSize))
-        addView(iconContainer, 0)
+
+        if (mIsRoundQS) {
+            setCornerRadius(getCornerRadiusForState(QSTile.State.DEFAULT_STATE))
+            iconContainer.addView(_icon, LayoutParams(iconSize, iconSize))
+            addView(iconContainer, 0)
+        } else {
+            val padding = resources.getDimensionPixelSize(R.dimen.qs_tile_padding)
+            val startPadding = resources.getDimensionPixelSize(R.dimen.qs_tile_start_padding)
+            setPaddingRelative(startPadding, padding, padding, padding)
+            addView(_icon, LayoutParams(iconSize, iconSize))
+        }
+
         createAndAddLabels()
         createAndAddSideView()
         updateResources()
@@ -223,7 +243,46 @@ open class QSTileViewImpl @JvmOverloads constructor(
     fun updateResources() {
         FontSizeUtils.updateFontSize(label, R.dimen.qs_tile_text_size)
         FontSizeUtils.updateFontSize(secondaryLabel, R.dimen.qs_tile_text_size)
-        
+
+        if (mIsRoundQS) {
+            updateRoundQSResources()
+        } else {
+            updateDefaultResources()
+        }
+    }
+
+    fun updateDefaultResources() {
+        val iconSize = context.resources.getDimensionPixelSize(R.dimen.qs_icon_size)
+        _icon.layoutParams.apply {
+            height = iconSize
+            width = iconSize
+        }
+
+        val padding = resources.getDimensionPixelSize(R.dimen.qs_tile_padding)
+        val startPadding = resources.getDimensionPixelSize(R.dimen.qs_tile_start_padding)
+        setPaddingRelative(startPadding, padding, padding, padding)
+
+        val labelMargin = resources.getDimensionPixelSize(R.dimen.qs_label_container_margin)
+        (labelContainer.layoutParams as MarginLayoutParams).apply {
+            marginStart = labelMargin
+        }
+
+        (sideView.layoutParams as MarginLayoutParams).apply {
+            marginStart = labelMargin
+        }
+        (chevronView.layoutParams as MarginLayoutParams).apply {
+            height = iconSize
+            width = iconSize
+        }
+
+        val endMargin = resources.getDimensionPixelSize(R.dimen.qs_drawable_end_margin)
+        (customDrawableView.layoutParams as MarginLayoutParams).apply {
+            height = iconSize
+            marginEnd = endMargin
+        }
+    }
+
+    fun updateRoundQSResources() {
         labelContainer.invalidate()
         labelContainer.apply {
             ignoreLastView = collapsed
@@ -231,20 +290,20 @@ open class QSTileViewImpl @JvmOverloads constructor(
         }
         secondaryLabel.alpha = if (collapsed) 0f else 1f
 
-        val iconContainerSize = context.resources.getDimensionPixelSize(R.dimen.qs_quick_tile_size)
+        orientation = LinearLayout.VERTICAL
+        gravity = Gravity.CENTER
 
+        val iconContainerSize = context.resources.getDimensionPixelSize(R.dimen.qs_quick_tile_size)
         iconContainer.layoutParams.apply {
             height = iconContainerSize
             width = iconContainerSize
         }
-
         val padding = resources.getDimensionPixelSize(R.dimen.qs_tile_padding)
         val iconSize = context.resources.getDimensionPixelSize(R.dimen.qs_icon_size)
         _icon.layoutParams.apply {
             height = iconSize
             width = iconSize
         }
-
         iconContainer.setPaddingRelative(padding, padding, padding, padding)
         (labelContainer.layoutParams as MarginLayoutParams).apply {
             topMargin = padding / 2
@@ -253,15 +312,27 @@ open class QSTileViewImpl @JvmOverloads constructor(
 
     private fun createAndAddLabels() {
         labelContainer = LayoutInflater.from(context)
-                .inflate(R.layout.qs_tile_label, this, false) as IgnorableChildLinearLayout
+                .inflate(if (mIsRoundQS) R.layout.qs_tile_label_round else R.layout.qs_tile_label, this, false) as IgnorableChildLinearLayout
         label = labelContainer.requireViewById(R.id.tile_label)
         secondaryLabel = labelContainer.requireViewById(R.id.app_label)
-        labelContainer.invalidate()
-        labelContainer.apply {
-            ignoreLastView = collapsed
-            forceUnspecifiedMeasure = collapsed
+        if (mIsRoundQS) {
+            labelContainer.invalidate()
+            labelContainer.apply {
+                ignoreLastView = collapsed
+                forceUnspecifiedMeasure = collapsed
+            }
+            secondaryLabel.alpha = if (collapsed) 0f else 1f
+        } else {
+            if (collapsed) {
+                labelContainer.ignoreLastView = true
+                // Ideally, it'd be great if the parent could set this up when measuring just this child
+                // instead of the View class having to support this. However, due to the mysteries of
+                // LinearLayout's double measure pass, we cannot overwrite `measureChild` or any of its
+                // sibling methods to have special behavior for labelContainer.
+                labelContainer.forceUnspecifiedMeasure = true
+                secondaryLabel.alpha = 0f
+            }
         }
-        secondaryLabel.alpha = if (collapsed) 0f else 1f
         setLabelColor(getLabelColorForState(QSTile.State.DEFAULT_STATE))
         setSecondaryLabelColor(getSecondaryLabelColorForState(QSTile.State.DEFAULT_STATE))
         addView(labelContainer)
@@ -269,7 +340,7 @@ open class QSTileViewImpl @JvmOverloads constructor(
 
     private fun createAndAddSideView() {
         sideView = LayoutInflater.from(context)
-                .inflate(R.layout.qs_tile_side_icon, this, false) as ViewGroup
+                .inflate(if (mIsRoundQS) R.layout.qs_tile_side_icon_round else R.layout.qs_tile_side_icon, this, false) as ViewGroup
         customDrawableView = sideView.requireViewById(R.id.customDrawable)
         chevronView = sideView.requireViewById(R.id.chevron)
         setChevronColor(getChevronColorForState(QSTile.State.DEFAULT_STATE))
@@ -277,7 +348,7 @@ open class QSTileViewImpl @JvmOverloads constructor(
     }
 
     fun createTileBackground(): Drawable {
-        ripple = mContext.getDrawable(R.drawable.qs_tile_background).mutate() as RippleDrawable
+        ripple = mContext.getDrawable(if (mIsRoundQS) R.drawable.qs_tile_background_no_mask else R.drawable.qs_tile_background).mutate() as RippleDrawable
         colorBackgroundDrawable = ripple.findDrawableByLayerId(R.id.background)
         return ripple
     }
@@ -310,7 +381,7 @@ open class QSTileViewImpl @JvmOverloads constructor(
     }
 
     override fun getIconWithBackground(): View {
-        return iconContainer
+        return if (mIsRoundQS) iconContainer else icon
     }
 
     override fun init(tile: QSTile) {
@@ -348,14 +419,26 @@ open class QSTileViewImpl @JvmOverloads constructor(
 
     override fun setClickable(clickable: Boolean) {
         super.setClickable(clickable)
-        iconContainer.background = if (clickable && showRippleEffect) {
-            ripple.also {
-                // In case that the colorBackgroundDrawable was used as the background, make sure
-                // it has the correct callback instead of null
-                colorBackgroundDrawable.callback = it
+        if (mIsRoundQS) {
+            iconContainer.background = if (clickable && showRippleEffect) {
+                ripple.also {
+                    // In case that the colorBackgroundDrawable was used as the background, make sure
+                    // it has the correct callback instead of null
+                    colorBackgroundDrawable.callback = it
+                }
+            } else {
+                colorBackgroundDrawable
             }
         } else {
-            colorBackgroundDrawable
+            background = if (clickable && showRippleEffect) {
+                ripple.also {
+                    // In case that the colorBackgroundDrawable was used as the background, make sure
+                    // it has the correct callback instead of null
+                    colorBackgroundDrawable.callback = it
+                }
+            } else {
+                colorBackgroundDrawable
+            }
         }
     }
 
@@ -506,7 +589,7 @@ open class QSTileViewImpl @JvmOverloads constructor(
         if (!Objects.equals(secondaryLabel.text, state.secondaryLabel)) {
             secondaryLabel.text = state.secondaryLabel
             secondaryLabel.visibility = if (TextUtils.isEmpty(state.secondaryLabel)) {
-                INVISIBLE
+                if (mIsRoundQS) INVISIBLE else GONE
             } else {
                 VISIBLE
             }
@@ -514,40 +597,50 @@ open class QSTileViewImpl @JvmOverloads constructor(
 
         // Colors
         if (state.state != lastState || state.disabledByPolicy || lastDisabledByPolicy) {
-            tileAnimator.cancel()
+            if (mIsRoundQS) {
+                tileAnimator.cancel()
+            } else {
+                singleAnimator.cancel()
+            }
             mQsLogger?.logTileBackgroundColorUpdateIfInternetTile(
                     state.spec,
                     state.state,
                     state.disabledByPolicy,
                     getBackgroundColorForState(state.state, state.disabledByPolicy))
             if (allowAnimations) {
-                shapeAnimator.setFloatValues(
-                    (colorBackgroundDrawable as GradientDrawable).cornerRadius, 
-                    getCornerRadiusForState(state.state)
+                if (mIsRoundQS) {
+                    shapeAnimator.setFloatValues(
+                        (colorBackgroundDrawable as GradientDrawable).cornerRadius, 
+                        getCornerRadiusForState(state.state)
                 )
+                }
                 singleAnimator.setValues(
-                    colorValuesHolder(
-                        BACKGROUND_NAME,
-                        paintColor,
-                        getBackgroundColorForState(state.state, state.disabledByPolicy)
-                    ),
-                    colorValuesHolder(
-                        LABEL_NAME,
-                        label.currentTextColor,
-                        getLabelColorForState(state.state, state.disabledByPolicy)
-                    ),
-                    colorValuesHolder(
-                        SECONDARY_LABEL_NAME,
-                        secondaryLabel.currentTextColor,
-                        getSecondaryLabelColorForState(state.state, state.disabledByPolicy)
-                    ),
-                    colorValuesHolder(
-                        CHEVRON_NAME,
-                        chevronView.imageTintList?.defaultColor ?: 0,
-                        getChevronColorForState(state.state, state.disabledByPolicy)
+                        colorValuesHolder(
+                                BACKGROUND_NAME,
+                                paintColor,
+                                getBackgroundColorForState(state.state, state.disabledByPolicy)
+                        ),
+                        colorValuesHolder(
+                                LABEL_NAME,
+                                label.currentTextColor,
+                                getLabelColorForState(state.state, state.disabledByPolicy)
+                        ),
+                        colorValuesHolder(
+                                SECONDARY_LABEL_NAME,
+                                secondaryLabel.currentTextColor,
+                                getSecondaryLabelColorForState(state.state, state.disabledByPolicy)
+                        ),
+                        colorValuesHolder(
+                                CHEVRON_NAME,
+                                chevronView.imageTintList?.defaultColor ?: 0,
+                                getChevronColorForState(state.state, state.disabledByPolicy)
+                        )
                     )
-                )
-                tileAnimator.start()
+                if (mIsRoundQS) {
+                    tileAnimator.start()
+                } else {
+                   singleAnimator.start()
+                }
             } else {
                 setAllColors(
                     getBackgroundColorForState(state.state, state.disabledByPolicy),
@@ -555,7 +648,9 @@ open class QSTileViewImpl @JvmOverloads constructor(
                     getSecondaryLabelColorForState(state.state, state.disabledByPolicy),
                     getChevronColorForState(state.state, state.disabledByPolicy)
                 )
-                setCornerRadius(getCornerRadiusForState(state.state))
+                if (mIsRoundQS) {
+                    setCornerRadius(getCornerRadiusForState(state.state))
+                }
             }
         }
 
