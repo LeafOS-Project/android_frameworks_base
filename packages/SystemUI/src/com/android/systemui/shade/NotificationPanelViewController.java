@@ -45,6 +45,7 @@ import static com.android.systemui.statusbar.VibratorHelper.TOUCH_VIBRATION_ATTR
 import static com.android.systemui.statusbar.notification.stack.StackStateAnimator.ANIMATION_DURATION_FOLD_TO_AOD;
 import static com.android.systemui.util.DumpUtilsKt.asIndenting;
 import static com.android.systemui.util.kotlin.JavaAdapterKt.collectFlow;
+import static com.android.systemui.util.qs.QSStyleUtils.isRoundQS;
 
 import static java.lang.Float.isNaN;
 
@@ -5525,9 +5526,11 @@ public final class NotificationPanelViewController implements Dumpable {
             mView.setAccessibilityPaneTitle(determineAccessibilityPaneTitle());
         }
         mNotificationStackScrollLayoutController.setMaxTopPadding(mQsMaxExpansionHeight);
-        float qsExpansionFraction = computeQsExpansionFraction();
-        int qsPanelBottomY = calculateQsBottomPosition(qsExpansionFraction);
-        mScrimController.setQsPosition(qsExpansionFraction, qsPanelBottomY);
+        if (isRoundQS()) {
+            float qsExpansionFraction = computeQsExpansionFraction();
+            int qsPanelBottomY = calculateQsBottomPosition(qsExpansionFraction);
+            mScrimController.setQsPosition(qsExpansionFraction, qsPanelBottomY);
+        }
     }
 
     private final class ConfigurationListener implements
