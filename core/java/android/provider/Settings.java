@@ -11172,6 +11172,12 @@ public final class Settings {
         public static final String QS_TILE_SHAPE = "qs_tile_shape";
 
         /**
+         * Quicksettings UI Style
+         * @hide
+         */
+        public static final String QS_ROUND_UI = "qs_round_ui";
+
+        /**
          * Brightness slider styles
          * @hide
          */
