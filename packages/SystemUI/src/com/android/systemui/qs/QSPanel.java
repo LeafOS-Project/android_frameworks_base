@@ -17,6 +17,7 @@
 package com.android.systemui.qs;
 
 import static com.android.systemui.util.Utils.useQsMediaPlayer;
+import static com.android.internal.util.systemui.qs.QSLayoutUtils.QS_UI_STYLE;
 
 import android.annotation.NonNull;
 import android.annotation.Nullable;
