@@ -30,4 +30,8 @@
         <item quantity="many">%d dispositivos conectados</item>
         <item quantity="other">%d dispositivos conectados</item>
     </plurals>
+    <string name="network_traffic_summary">Habilitar ou desabilitar o indicador do tráfego de rede na barra de status</string>
+    <string name="show_fourg_icon_title">Ícone 4G</string>
+    <string name="network_traffic_title">Indicador do tráfego de rede</string>
+    <string name="show_fourg_icon_summary">Mostrar 4G ao invés do ícone LTE na barra de status</string>
 </resources>
