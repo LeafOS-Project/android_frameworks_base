@@ -51,4 +51,8 @@
         <item quantity="one">%d device connected</item>
         <item quantity="other">%d devices connected</item>
     </plurals>
+
+    <!-- Network traffic -->
+    <string name="network_traffic_title">Network traffic indicator</string>
+    <string name="network_traffic_summary">Enable or disable network speed indicator in status bar</string>
 </resources>
