@@ -30,6 +30,10 @@
         <item quantity="other">%d devices connected</item>
     </plurals>
 
+    <!-- Network traffic -->
+    <string name="network_traffic_title">Network traffic indicator</string>
+    <string name="network_traffic_summary">Enable or disable network speed indicator in status bar</string>
+
      <!-- Data usage info in QS footer -->
     <string name="usage_data">used today</string>
     <string name="usage_data_default_suffix">Data</string>

@@ -17,4 +17,7 @@
 
 <resources>
     <dimen name="settingslib_preference_corner_radius">20dp</dimen>
+
+    <!-- Network traffic -->
+    <dimen name="network_traffic_width">25sp</dimen>
 </resources>
