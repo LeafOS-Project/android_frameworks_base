@@ -1169,6 +1169,10 @@ Todo: android.provider.ContactsContract.RawContacts#newEntityIterator(android.da
     Documentation mentions 'TODO'
 
 
+UnflaggedApi: android.Manifest.permission#FAKE_PACKAGE_SIGNATURE:
+    New API must be flagged with @FlaggedApi: field android.Manifest.permission.FAKE_PACKAGE_SIGNATURE
+UnflaggedApi: android.Manifest.permission_group#FAKE_PACKAGE:
+    New API must be flagged with @FlaggedApi: field android.Manifest.permission_group.FAKE_PACKAGE
 UnflaggedApi: android.accessibilityservice.AccessibilityService#OVERLAY_RESULT_INTERNAL_ERROR:
     New API must be flagged with @FlaggedApi: field android.accessibilityservice.AccessibilityService.OVERLAY_RESULT_INTERNAL_ERROR
 UnflaggedApi: android.accessibilityservice.AccessibilityService#OVERLAY_RESULT_INVALID:
