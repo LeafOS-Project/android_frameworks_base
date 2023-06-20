@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "183230c4_e74f8085",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-20T14:47:57Z",
+      "side": 1,
+      "message": "The topic for this whole fwb chain seems wrong, not really related to qcom, is it?",
+      "revId": "5f1e179b098697b28c3338c8a2be08b7a80c2812",
+      "serverId": "b49086b3-c06c-47ea-b69e-65c8379e1be6"
+    }
+  ]
+}
