@@ -58,7 +58,7 @@ public class QuickQSPanelController extends QSPanelControllerBase<QuickQSPanel> 
     private BrightnessMirrorController mBrightnessMirrorController;
 
     @Inject
-    QuickQSPanelController(QuickQSPanel view, QSTileHost qsTileHost,
+    QuickQSPanelController(QuickQSPanel view, QSHost qsHost,
             QSCustomizerController qsCustomizerController,
             @Named(QS_USING_MEDIA_PLAYER) boolean usingMediaPlayer,
             @Named(QUICK_QS_PANEL) MediaHost mediaHost,
@@ -70,7 +70,7 @@ public class QuickQSPanelController extends QSPanelControllerBase<QuickQSPanel> 
             BrightnessController.Factory brightnessControllerFactory,
             BrightnessSliderController.Factory brightnessSliderFactory
     ) {
-        super(view, qsTileHost, qsCustomizerController, usingMediaPlayer, mediaHost, metricsLogger,
+        super(view, qsHost, qsCustomizerController, usingMediaPlayer, mediaHost, metricsLogger,
                 uiEventLogger, qsLogger, dumpManager);
         mUsingCollapsedLandscapeMediaProvider = usingCollapsedLandscapeMediaProvider;
         mTunerService = tunerService;
