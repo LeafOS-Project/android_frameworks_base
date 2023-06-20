@@ -178,6 +178,11 @@ public final class RotationPolicy {
         return false;
     }
 
+    private static boolean useCurrentRotationOnRotationLockChange(Context context) {
+        return context.getResources().getBoolean(
+                R.bool.config_useCurrentRotationOnRotationLockChange);
+    }
+
     private static void setRotationLock(final boolean enabled, final int rotation) {
         AsyncTask.execute(new Runnable() {
             @Override

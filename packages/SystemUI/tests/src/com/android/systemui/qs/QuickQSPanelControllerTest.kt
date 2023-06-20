@@ -50,7 +50,7 @@ import org.mockito.MockitoAnnotations
 class QuickQSPanelControllerTest : SysuiTestCase() {
 
     @Mock private lateinit var quickQSPanel: QuickQSPanel
-    @Mock private lateinit var qsTileHost: QSTileHost
+    @Mock private lateinit var qsHost: QSHost
     @Mock private lateinit var qsCustomizerController: QSCustomizerController
     @Mock private lateinit var mediaHost: MediaHost
     @Mock private lateinit var metricsLogger: MetricsLogger
@@ -77,12 +77,12 @@ class QuickQSPanelControllerTest : SysuiTestCase() {
         whenever(quickQSPanel.isAttachedToWindow).thenReturn(true)
         whenever(quickQSPanel.dumpableTag).thenReturn("")
         whenever(quickQSPanel.resources).thenReturn(mContext.resources)
-        whenever(qsTileHost.createTileView(any(), any(), anyBoolean())).thenReturn(tileView)
+        whenever(qsHost.createTileView(any(), any(), anyBoolean())).thenReturn(tileView)
 
         controller =
             TestQuickQSPanelController(
                 quickQSPanel,
-                qsTileHost,
+                qsHost,
                 qsCustomizerController,
                 /* usingMediaPlayer = */ false,
                 mediaHost,
@@ -105,7 +105,7 @@ class QuickQSPanelControllerTest : SysuiTestCase() {
     fun testTileSublistWithFewerTiles_noCrash() {
         whenever(quickQSPanel.numQuickTiles).thenReturn(3)
 
-        whenever(qsTileHost.tiles).thenReturn(listOf(tile, tile))
+        whenever(qsHost.tiles).thenReturn(listOf(tile, tile))
 
         controller.setTiles()
     }
@@ -114,7 +114,7 @@ class QuickQSPanelControllerTest : SysuiTestCase() {
     fun testTileSublistWithTooManyTiles() {
         val limit = 3
         whenever(quickQSPanel.numQuickTiles).thenReturn(limit)
-        whenever(qsTileHost.tiles).thenReturn(listOf(tile, tile, tile, tile))
+        whenever(qsHost.tiles).thenReturn(listOf(tile, tile, tile, tile))
 
         controller.setTiles()
 
@@ -155,7 +155,7 @@ class QuickQSPanelControllerTest : SysuiTestCase() {
 
     class TestQuickQSPanelController(
         view: QuickQSPanel,
-        qsTileHost: QSTileHost,
+        qsHost: QSHost,
         qsCustomizerController: QSCustomizerController,
         usingMediaPlayer: Boolean,
         mediaHost: MediaHost,
@@ -167,7 +167,7 @@ class QuickQSPanelControllerTest : SysuiTestCase() {
     ) :
         QuickQSPanelController(
             view,
-            qsTileHost,
+            qsHost,
             qsCustomizerController,
             usingMediaPlayer,
             mediaHost,
