@@ -25,6 +25,9 @@ import com.android.systemui.biometrics.data.repository.BiometricStatusRepository
 import com.android.systemui.biometrics.data.repository.BiometricStatusRepositoryImpl
 import com.android.systemui.biometrics.data.repository.DisplayStateRepository
 import com.android.systemui.biometrics.data.repository.DisplayStateRepositoryImpl
+
+import android.content.Context
+
 import com.android.systemui.biometrics.data.repository.FacePropertyRepository
 import com.android.systemui.biometrics.data.repository.FacePropertyRepositoryImpl
 import com.android.systemui.biometrics.data.repository.FaceSettingsRepository
@@ -38,6 +41,8 @@ import com.android.systemui.biometrics.udfps.EllipseOverlapDetector
 import com.android.systemui.biometrics.udfps.OverlapDetector
 import com.android.systemui.biometrics.ui.binder.SideFpsOverlayViewBinder
 import com.android.systemui.dagger.SysUISingleton
+import com.android.systemui.biometrics.FingerprintInteractiveToAuthProvider
+import com.android.systemui.biometrics.FingerprintInteractiveToAuthProviderImpl
 import com.android.systemui.util.concurrency.ThreadFactory
 import dagger.Binds
 import dagger.Module
@@ -114,6 +119,10 @@ interface BiometricsModule {
                 BoundingBoxOverlapDetector(values[2])
             }
         }
+
+        @Provides
+        fun providesFingerprintInteractiveToAuth(ctx: Context): FingerprintInteractiveToAuthProvider =
+            FingerprintInteractiveToAuthProviderImpl(ctx);
     }
 }
 
