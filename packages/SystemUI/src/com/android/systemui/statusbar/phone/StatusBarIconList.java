@@ -122,7 +122,7 @@ public class StatusBarIconList {
         final int N = mSlots.size();
         for (int i = 0; i < N; i++) {
             Slot item = mSlots.get(i);
-            if (item.getName().equals(slot)) {
+            if (item.getName() != null && item.getName().equals(slot)) {
                 return i;
             }
         }
