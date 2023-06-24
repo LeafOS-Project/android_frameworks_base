@@ -21,13 +21,13 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Process;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.android.server.ServiceThread;
+import com.android.server.SystemService;
 
-import com.android.internal.lineage.LineageSystemService;
-
-import com.android.internal.lineage.app.LineageContextConstants;
+import com.android.internal.lineage.health.HealthInterface;
 import com.android.internal.lineage.health.IHealthInterface;
 import vendor.lineage.health.ChargingControlSupportedMode;
 
@@ -36,7 +36,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HealthInterfaceService extends LineageSystemService {
+public class HealthInterfaceService extends SystemService {
 
     private static final String TAG = "LineageHealth";
     private final Context mContext;
@@ -58,30 +58,14 @@ public class HealthInterfaceService extends LineageSystemService {
     }
 
     @Override
-    public String getFeatureDeclaration() {
-        return LineageContextConstants.Features.HEALTH;
-    }
-
-    @Override
-    public boolean isCoreService() {
-        return false;
-    }
-
-    @Override
     public void onStart() {
-        if (!mContext.getPackageManager().hasSystemFeature(
-                LineageContextConstants.Features.HEALTH)) {
-            Log.wtf(TAG, "Lineage Health service started by system server but feature xml "
-                    + "not declared. Not publishing binder service!");
-            return;
-        }
         mCCC = new ChargingControlController(mContext, mHandler);
         if (mCCC.isSupported()) {
             mFeatures.add(mCCC);
         }
 
         if (!mFeatures.isEmpty()) {
-            publishBinderService(LineageContextConstants.LINEAGE_HEALTH_INTERFACE, mService);
+            publishBinderService(HealthInterface.LINEAGE_HEALTH_INTERFACE, mService);
         }
     }
 

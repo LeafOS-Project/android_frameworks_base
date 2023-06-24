@@ -21,12 +21,11 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.UserHandle;
+import android.provider.Settings;
 
 import com.android.internal.lineage.common.UserContentObserver;
 
 import java.io.PrintWriter;
-
-import lineageos.providers.LineageSettings;
 
 public abstract class LineageBaseFeature {
     protected final Context mContext;
@@ -56,32 +55,32 @@ public abstract class LineageBaseFeature {
     }
 
     protected final boolean getBoolean(String setting, boolean defaultValue) {
-        return LineageSettings.System.getIntForUser(mContext.getContentResolver(),
+        return Settings.System.getIntForUser(mContext.getContentResolver(),
                 setting, (defaultValue ? 1 : 0), UserHandle.USER_CURRENT) == 1;
     }
 
     protected final void putBoolean(String setting, boolean value) {
-        LineageSettings.System.putIntForUser(mContext.getContentResolver(),
+        Settings.System.putIntForUser(mContext.getContentResolver(),
                 setting, (value ? 1 : 0), UserHandle.USER_CURRENT);
     }
 
     protected final int getInt(String setting, int defaultValue) {
-        return LineageSettings.System.getIntForUser(mContext.getContentResolver(),
+        return Settings.System.getIntForUser(mContext.getContentResolver(),
                 setting, defaultValue, UserHandle.USER_CURRENT);
     }
 
     protected final void putInt(String setting, int value) {
-        LineageSettings.System.putIntForUser(mContext.getContentResolver(),
+        Settings.System.putIntForUser(mContext.getContentResolver(),
                 setting, value, UserHandle.USER_CURRENT);
     }
 
     protected final String getString(String setting) {
-        return LineageSettings.System.getStringForUser(mContext.getContentResolver(),
+        return Settings.System.getStringForUser(mContext.getContentResolver(),
                 setting, UserHandle.USER_CURRENT);
     }
 
     protected final void putString(String setting, String value) {
-        LineageSettings.System.putStringForUser(mContext.getContentResolver(),
+        Settings.System.putStringForUser(mContext.getContentResolver(),
                 setting, value, UserHandle.USER_CURRENT);
     }
 

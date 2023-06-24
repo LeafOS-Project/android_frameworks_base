@@ -35,6 +35,7 @@ import android.os.BatteryUsageStats;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.os.ServiceManager;
+import android.provider.Settings;
 import android.text.format.DateUtils;
 import android.util.Log;
 
@@ -50,8 +51,6 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
-
-import lineageos.providers.LineageSettings;
 
 import vendor.lineage.health.ChargingControlSupportedMode;
 import vendor.lineage.health.IChargingControl;
@@ -82,16 +81,16 @@ public class ChargingControlController extends LineageHealthFeature {
     private int mConfigTargetTime = 0;
 
     // Settings uris
-    private final Uri MODE_URI = LineageSettings.System.getUriFor(
-            LineageSettings.System.CHARGING_CONTROL_MODE);
-    private final Uri LIMIT_URI = LineageSettings.System.getUriFor(
-            LineageSettings.System.CHARGING_CONTROL_LIMIT);
-    private final Uri ENABLED_URI = LineageSettings.System.getUriFor(
-            LineageSettings.System.CHARGING_CONTROL_ENABLED);
-    private final Uri START_TIME_URI = LineageSettings.System.getUriFor(
-            LineageSettings.System.CHARGING_CONTROL_START_TIME);
-    private final Uri TARGET_TIME_URI = LineageSettings.System.getUriFor(
-            LineageSettings.System.CHARGING_CONTROL_TARGET_TIME);
+    private final Uri MODE_URI = Settings.System.getUriFor(
+            Settings.System.CHARGING_CONTROL_MODE);
+    private final Uri LIMIT_URI = Settings.System.getUriFor(
+            Settings.System.CHARGING_CONTROL_LIMIT);
+    private final Uri ENABLED_URI = Settings.System.getUriFor(
+            Settings.System.CHARGING_CONTROL_ENABLED);
+    private final Uri START_TIME_URI = Settings.System.getUriFor(
+            Settings.System.CHARGING_CONTROL_START_TIME);
+    private final Uri TARGET_TIME_URI = Settings.System.getUriFor(
+            Settings.System.CHARGING_CONTROL_TARGET_TIME);
 
     // Internal state
     private float mBatteryPct = 0;
@@ -182,7 +181,7 @@ public class ChargingControlController extends LineageHealthFeature {
     }
 
     public boolean setEnabled(boolean enabled) {
-        putBoolean(LineageSettings.System.CHARGING_CONTROL_ENABLED, enabled);
+        putBoolean(Settings.System.CHARGING_CONTROL_ENABLED, enabled);
         return true;
     }
 
@@ -195,7 +194,7 @@ public class ChargingControlController extends LineageHealthFeature {
             return false;
         }
 
-        putInt(LineageSettings.System.CHARGING_CONTROL_MODE, mode);
+        putInt(Settings.System.CHARGING_CONTROL_MODE, mode);
         return true;
     }
 
@@ -208,7 +207,7 @@ public class ChargingControlController extends LineageHealthFeature {
             return false;
         }
 
-        putInt(LineageSettings.System.CHARGING_CONTROL_START_TIME, time);
+        putInt(Settings.System.CHARGING_CONTROL_START_TIME, time);
         return true;
     }
 
@@ -221,7 +220,7 @@ public class ChargingControlController extends LineageHealthFeature {
             return false;
         }
 
-        putInt(LineageSettings.System.CHARGING_CONTROL_TARGET_TIME, time);
+        putInt(Settings.System.CHARGING_CONTROL_TARGET_TIME, time);
         return true;
     }
 
@@ -234,7 +233,7 @@ public class ChargingControlController extends LineageHealthFeature {
             return false;
         }
 
-        putInt(LineageSettings.System.CHARGING_CONTROL_LIMIT, limit);
+        putInt(Settings.System.CHARGING_CONTROL_LIMIT, limit);
         return true;
     }
 
@@ -617,20 +616,20 @@ public class ChargingControlController extends LineageHealthFeature {
     }
 
     private void handleSettingChange() {
-        mConfigEnabled = LineageSettings.System.getInt(mContentResolver,
-                LineageSettings.System.CHARGING_CONTROL_ENABLED, 0)
+        mConfigEnabled = Settings.System.getInt(mContentResolver,
+                Settings.System.CHARGING_CONTROL_ENABLED, 0)
                 != 0;
-        mConfigLimit = LineageSettings.System.getInt(mContentResolver,
-                LineageSettings.System.CHARGING_CONTROL_LIMIT,
+        mConfigLimit = Settings.System.getInt(mContentResolver,
+                Settings.System.CHARGING_CONTROL_LIMIT,
                 mDefaultLimit);
-        mConfigMode = LineageSettings.System.getInt(mContentResolver,
-                LineageSettings.System.CHARGING_CONTROL_MODE,
+        mConfigMode = Settings.System.getInt(mContentResolver,
+                Settings.System.CHARGING_CONTROL_MODE,
                 mDefaultMode);
-        mConfigStartTime = LineageSettings.System.getInt(mContentResolver,
-                LineageSettings.System.CHARGING_CONTROL_START_TIME,
+        mConfigStartTime = Settings.System.getInt(mContentResolver,
+                Settings.System.CHARGING_CONTROL_START_TIME,
                 mDefaultStartTime);
-        mConfigTargetTime = LineageSettings.System.getInt(mContentResolver,
-                LineageSettings.System.CHARGING_CONTROL_TARGET_TIME,
+        mConfigTargetTime = Settings.System.getInt(mContentResolver,
+                Settings.System.CHARGING_CONTROL_TARGET_TIME,
                 mDefaultTargetTime);
 
         // Cancel notification, so that it can be updated later
