@@ -51,8 +51,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
-import lineageos.providers.LineageSettings;
-
 import vendor.lineage.health.ChargingControlSupportedMode;
 import vendor.lineage.health.IChargingControl;
 
@@ -82,16 +80,16 @@ public class ChargingControlController extends LineageHealthFeature {
     private int mConfigTargetTime = 0;
 
     // Settings uris
-    private final Uri MODE_URI = LineageSettings.System.getUriFor(
-            LineageSettings.System.CHARGING_CONTROL_MODE);
-    private final Uri LIMIT_URI = LineageSettings.System.getUriFor(
-            LineageSettings.System.CHARGING_CONTROL_LIMIT);
-    private final Uri ENABLED_URI = LineageSettings.System.getUriFor(
-            LineageSettings.System.CHARGING_CONTROL_ENABLED);
-    private final Uri START_TIME_URI = LineageSettings.System.getUriFor(
-            LineageSettings.System.CHARGING_CONTROL_START_TIME);
-    private final Uri TARGET_TIME_URI = LineageSettings.System.getUriFor(
-            LineageSettings.System.CHARGING_CONTROL_TARGET_TIME);
+    private final Uri MODE_URI = Settings.System.getUriFor(
+            Settings.System.CHARGING_CONTROL_MODE);
+    private final Uri LIMIT_URI = Settings.System.getUriFor(
+            Settings.System.CHARGING_CONTROL_LIMIT);
+    private final Uri ENABLED_URI = Settings.System.getUriFor(
+            Settings.System.CHARGING_CONTROL_ENABLED);
+    private final Uri START_TIME_URI = Settings.System.getUriFor(
+            Settings.System.CHARGING_CONTROL_START_TIME);
+    private final Uri TARGET_TIME_URI = Settings.System.getUriFor(
+            Settings.System.CHARGING_CONTROL_TARGET_TIME);
 
     // Internal state
     private float mBatteryPct = 0;
@@ -113,7 +111,7 @@ public class ChargingControlController extends LineageHealthFeature {
     // Only when the battery level is above this limit will the charging control be activated.
     private static int CHARGE_CTRL_MIN_LEVEL = 80;
     private static final String INTENT_PARTS =
-            "org.lineageos.lineageparts.CHARGING_CONTROL_SETTINGS";
+            "com.android.settings.lineage.health.CHARGING_CONTROL_SETTINGS";
 
     private static class ChargingStopReason {
         private static int BIT(int shift) {
