@@ -22,9 +22,18 @@ import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.util.Log;
 
-import com.android.internal.lineage.app.LineageContextConstants;
-
 public class HealthInterface {
+    /**
+     * Use with {@link android.content.Context#getSystemService} to retrieve a
+     * {@link HealthInterface} to access the Health interface.
+     *
+     * @see android.content.Context#getSystemService
+     * @see HealthInterface
+     *
+     * @hide
+     */
+    public static final String LINEAGE_HEALTH_INTERFACE = "lineagehealth";
+
     /**
      * No config set. This value is invalid and does not have any effects
      */
@@ -55,8 +64,7 @@ public class HealthInterface {
         mContext = appContext == null ? context : appContext;
         sService = getService();
 
-        if (context.getPackageManager().hasSystemFeature(
-                LineageContextConstants.Features.HEALTH) && sService == null) {
+        if (sService == null) {
             throw new RuntimeException("Unable to get HealthInterfaceService. The service" +
                     " either crashed, was not started, or the interface has been called too early" +
                     " in SystemServer init");
@@ -82,7 +90,7 @@ public class HealthInterface {
         if (sService != null) {
             return sService;
         }
-        IBinder b = ServiceManager.getService(LineageContextConstants.LINEAGE_HEALTH_INTERFACE);
+        IBinder b = ServiceManager.getService(LINEAGE_HEALTH_INTERFACE);
         sService = IHealthInterface.Stub.asInterface(b);
 
         if (sService == null) {
