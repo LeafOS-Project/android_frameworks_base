@@ -747,7 +747,7 @@ public class InternetDialog extends SystemUIDialog implements
             int numDevices = mInternetDialogController.getHotspotNumDevices();
             if (numDevices > 0) {
                 return mContext.getResources().getQuantityString(
-                        R.string.quick_settings_hotspot_secondary_label_num_devices,
+                        R.plurals.quick_settings_internet_hotspot_summary_num_devices,
                         numDevices, numDevices);
             }
             return mContext.getString(R.string.switch_bar_on);
