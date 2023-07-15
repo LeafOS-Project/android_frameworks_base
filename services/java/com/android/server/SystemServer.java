@@ -444,6 +444,8 @@ public final class SystemServer implements Dumpable {
             "com.android.server.bluetooth.BluetoothService";
     private static final String SAFETY_CENTER_SERVICE_CLASS =
             "com.android.safetycenter.SafetyCenterService";
+    private static final String FACE_UNLOCK_SERVICE_CLASS =
+            "com.android.server.libremobileos.FaceUnlockService";
 
     private static final String SDK_SANDBOX_MANAGER_SERVICE_CLASS =
             "com.android.server.sdksandbox.SdkSandboxManagerService$Lifecycle";
@@ -2981,6 +2983,10 @@ public final class SystemServer implements Dumpable {
                     DEVICE_LOCK_APEX_PATH);
             t.traceEnd();
         }
+
+        t.traceBegin("StartFaceUnlockService");
+        mSystemServiceManager.startService(FACE_UNLOCK_SERVICE_CLASS);
+        t.traceEnd();
 
         // These are needed to propagate to the runnable below.
         final NetworkManagementService networkManagementF = networkManagement;
