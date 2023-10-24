@@ -71,14 +71,16 @@ public final class AttestationHooks {
         String packageName = app.getPackageName();
         String processName = Application.getProcessName();
 
-        if (PACKAGE_GMS.equals(packageName)
-                && PROCESS_UNSTABLE.equals(processName)) {
-          sIsGms = true;
-          setBuildField("FINGERPRINT", "google/marlin/marlin:7.1.2/NJH47F/4146041:user/release-keys");
-          setBuildField("PRODUCT", "marlin");
-          setBuildField("DEVICE", "marlin");
-          setBuildField("MODEL", "Pixel XL");
-          setVersionField("DEVICE_INITIAL_SDK_INT", Build.VERSION_CODES.N_MR1);
+        if (PACKAGE_GMS.equals(packageName)) {
+            setBuildField("TIME", System.currentTimeMillis());
+            if (PROCESS_UNSTABLE.equals(processName)) {
+              sIsGms = true;
+              setBuildField("FINGERPRINT", "google/marlin/marlin:7.1.2/NJH47F/4146041:user/release-keys");
+              setBuildField("PRODUCT", "marlin");
+              setBuildField("DEVICE", "marlin");
+              setBuildField("MODEL", "Pixel XL");
+              setVersionField("DEVICE_INITIAL_SDK_INT", Build.VERSION_CODES.N_MR1);
+            }
         }
 
         // Samsung apps like SmartThings, Galaxy Wearable crashes on samsung devices running AOSP
