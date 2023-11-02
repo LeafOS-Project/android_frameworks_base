@@ -2773,7 +2773,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
                 && !strongerAuthRequired
                 && userDoesNotHaveTrust);
 
-        final boolean shouldListenFpsState = isUdfps
+        final boolean shouldListenFpsState = !isUdfps
                 || mFingerprintInteractiveToAuthProvider == null
                 || !mFingerprintInteractiveToAuthProvider.isEnabled(user)
                 || (isDeviceInteractive() && !mGoingToSleep);
