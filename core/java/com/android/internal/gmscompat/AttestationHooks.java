@@ -18,7 +18,6 @@ package com.android.internal.gmscompat;
 
 import android.app.Application;
 import android.os.Build;
-import android.os.Build.VERSION;
 import android.util.Log;
 
 import java.lang.reflect.Field;
@@ -51,22 +50,6 @@ public final class AttestationHooks {
         }
     }
 
-    private static void setVersionField(String key, Integer value) {
-        try {
-            // Unlock
-            Field field = Build.VERSION.class.getDeclaredField(key);
-            field.setAccessible(true);
-
-            // Edit
-            field.set(null, value);
-
-            // Lock
-            field.setAccessible(false);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            Log.e(TAG, "Failed to spoof Build." + key, e);
-        }
-    }
-
     public static void initApplicationBeforeOnCreate(Application app) {
         String packageName = app.getPackageName();
         String processName = Application.getProcessName();
@@ -75,11 +58,12 @@ public final class AttestationHooks {
             setBuildField("TIME", System.currentTimeMillis());
             if (PROCESS_UNSTABLE.equals(processName)) {
               sIsGms = true;
-              setBuildField("FINGERPRINT", "google/marlin/marlin:7.1.2/NJH47F/4146041:user/release-keys");
-              setBuildField("PRODUCT", "marlin");
-              setBuildField("DEVICE", "marlin");
-              setBuildField("MODEL", "Pixel XL");
-              setVersionField("DEVICE_INITIAL_SDK_INT", Build.VERSION_CODES.N_MR1);
+              setBuildField("FINGERPRINT", "asus/WW_Phone/ASUS_X00HD_4:7.1.1/NMF26F/14.2016.1801.372-20180119:user/release-keys");
+              setBuildField("PRODUCT", "WW_Phone");
+              setBuildField("DEVICE", "ASUS_X00HD_4");
+              setBuildField("MANUFACTURER", "Asus");
+              setBuildField("BRAND", "Asus");
+              setBuildField("MODEL", "ASUS_X00HD");
             }
         }
 
