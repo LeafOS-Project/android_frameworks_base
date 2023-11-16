@@ -75,11 +75,11 @@ public final class AttestationHooks {
             setBuildField("TIME", System.currentTimeMillis());
             if (PROCESS_UNSTABLE.equals(processName)) {
               sIsGms = true;
-              setBuildField("FINGERPRINT", "google/marlin/marlin:7.1.2/NJH47F/4146041:user/release-keys");
-              setBuildField("PRODUCT", "marlin");
-              setBuildField("DEVICE", "marlin");
-              setBuildField("MODEL", "Pixel XL");
-              setVersionField("DEVICE_INITIAL_SDK_INT", Build.VERSION_CODES.N_MR1);
+              setBuildField("FINGERPRINT", "google/bullhead/bullhead:8.0.0/OPR6.170623.013/4283548:user/release-keys");
+              setBuildField("PRODUCT", "bullhead");
+              setBuildField("DEVICE", "bullhead");
+              setBuildField("MODEL", "Nexus 5X");
+              setVersionField("DEVICE_INITIAL_SDK_INT", Build.VERSION_CODES.N);
             }
         }
 
