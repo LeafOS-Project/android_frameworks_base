@@ -190,6 +190,8 @@ public class UdfpsController implements DozeReceiver, Dumpable {
     @Nullable private VelocityTracker mVelocityTracker;
     // The ID of the pointer for which ACTION_DOWN has occurred. -1 means no pointer is active.
     private int mActivePointerId = -1;
+    // Whether a pointer has been pilfered for current gesture
+    private boolean mPointerPilfered = false;
     // The timestamp of the most recent touch log.
     private long mTouchLogTime;
     // The timestamp of the most recent log of a touch InteractionEvent.
@@ -367,7 +369,8 @@ public class UdfpsController implements DozeReceiver, Dumpable {
                 UdfpsController.this.mAlternateTouchProvider.onUiReady();
             } else {
                 final long requestId = (mOverlay != null) ? mOverlay.getRequestId() : 0L;
-                UdfpsController.this.mFingerprintManager.onUiReady(requestId, sensorId);
+                UdfpsController.this.mFingerprintManager.onUdfpsUiEvent(
+                        FingerprintManager.UDFPS_UI_READY, requestId, sensorId);
             }
         }
     }
@@ -570,6 +573,11 @@ public class UdfpsController implements DozeReceiver, Dumpable {
                 || mPrimaryBouncerInteractor.isInTransit()) {
             return false;
         }
+        if (event.getAction() == MotionEvent.ACTION_DOWN
+                || event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+            // Reset on ACTION_DOWN, start of new gesture
+            mPointerPilfered = false;
+        }
 
         final TouchProcessorResult result = mTouchProcessor.processTouch(event, mActivePointerId,
                 mOverlayParams);
@@ -649,10 +657,12 @@ public class UdfpsController implements DozeReceiver, Dumpable {
             shouldPilfer = true;
         }
 
-        // Execute the pilfer
-        if (shouldPilfer) {
+        // Pilfer only once per gesture, don't pilfer for BP
+        if (shouldPilfer && !mPointerPilfered
+                && getBiometricSessionType() != SESSION_BIOMETRIC_PROMPT) {
             mInputManager.pilferPointers(
                     mOverlay.getOverlayView().getViewRootImpl().getInputToken());
+            mPointerPilfered = true;
         }
 
         return processedTouch.getTouchData().isWithinBounds(mOverlayParams.getNativeSensorBounds());
@@ -979,6 +989,10 @@ public class UdfpsController implements DozeReceiver, Dumpable {
             mOnFingerDown = false;
             mAttemptedToDismissKeyguard = false;
             mOrientationListener.enable();
+            if (mFingerprintManager != null) {
+                mFingerprintManager.onUdfpsUiEvent(FingerprintManager.UDFPS_UI_OVERLAY_SHOWN,
+                        overlay.getRequestId(), mSensorProps.sensorId);
+            }
         } else {
             Log.v(TAG, "showUdfpsOverlay | the overlay is already showing");
         }
@@ -1120,7 +1134,8 @@ public class UdfpsController implements DozeReceiver, Dumpable {
                 mLatencyTracker.onActionEnd(LatencyTracker.ACTION_UDFPS_ILLUMINATE);
             });
         } else {
-            mFingerprintManager.onUiReady(requestId, mSensorProps.sensorId);
+            mFingerprintManager.onUdfpsUiEvent(FingerprintManager.UDFPS_UI_READY, requestId,
+                    mSensorProps.sensorId);
             mLatencyTracker.onActionEnd(LatencyTracker.ACTION_UDFPS_ILLUMINATE);
         }
     }
