@@ -32,18 +32,21 @@ import android.os.Handler;
 import android.os.PatternMatcher;
 import android.os.RemoteException;
 import android.os.ServiceManager;
+import android.os.Trace;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.provider.Settings.Secure;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.android.systemui.Dumpable;
 import com.android.systemui.dagger.SysUISingleton;
+import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.dagger.qualifiers.UiBackground;
 import com.android.systemui.dump.DumpManager;
-import com.android.systemui.shared.system.ActivityManagerWrapper;
+import com.android.systemui.settings.UserTracker;
 import com.android.systemui.statusbar.policy.ConfigurationController;
-import com.android.systemui.statusbar.policy.DeviceProvisionedController;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -69,22 +72,21 @@ public class NavigationModeController implements Dumpable {
     private Context mCurrentUserContext;
     private final IOverlayManager mOverlayManager;
     private final Executor mUiBgExecutor;
+    private final UserTracker mUserTracker;
 
     private ArrayList<ModeChangedListener> mListeners = new ArrayList<>();
 
-    private final DeviceProvisionedController.DeviceProvisionedListener mDeviceProvisionedCallback =
-            new DeviceProvisionedController.DeviceProvisionedListener() {
-                @Override
-                public void onUserSwitched() {
-                    if (DEBUG) {
-                        Log.d(TAG, "onUserSwitched: "
-                                + ActivityManagerWrapper.getInstance().getCurrentUserId());
-                    }
+    private final UserTracker.Callback mUserTrackerCallback = new UserTracker.Callback() {
+        @Override
+        public void onUserChanged(int newUser, @NonNull Context userContext) {
+            if (DEBUG) {
+                Log.d(TAG, "onUserChanged: "
+                        + newUser);
+            }
 
-                    // Update the nav mode for the current user
-                    updateCurrentInteractionMode(true /* notify */);
-                }
-            };
+            updateCurrentInteractionMode(true /* notify */);
+        }
+    };
 
     private final class SettingsObserver extends ContentObserver {
         public SettingsObserver(Handler handler) {
@@ -117,18 +119,19 @@ public class NavigationModeController implements Dumpable {
 
     @Inject
     public NavigationModeController(Context context,
-            DeviceProvisionedController deviceProvisionedController,
             ConfigurationController configurationController,
+            UserTracker userTracker,
+            @Main Executor mainExecutor,
             @UiBackground Executor uiBgExecutor,
             DumpManager dumpManager) {
         mContext = context;
         mCurrentUserContext = context;
+        mUserTracker = userTracker;
+        mUserTracker.addCallback(mUserTrackerCallback, mainExecutor);
         mOverlayManager = IOverlayManager.Stub.asInterface(
                 ServiceManager.getService(Context.OVERLAY_SERVICE));
         mUiBgExecutor = uiBgExecutor;
         dumpManager.registerDumpable(getClass().getSimpleName(), this);
-
-        deviceProvisionedController.addCallback(mDeviceProvisionedCallback);
 
         IntentFilter overlayFilter = new IntentFilter(ACTION_OVERLAY_CHANGED);
         overlayFilter.addDataScheme("package");
@@ -154,6 +157,7 @@ public class NavigationModeController implements Dumpable {
     }
 
     public void updateCurrentInteractionMode(boolean notify) {
+        Trace.beginSection("NMC#updateCurrentInteractionMode");
         mCurrentUserContext = getCurrentUserContext();
         int mode = getCurrentInteractionMode(mCurrentUserContext);
         mUiBgExecutor.execute(() ->
@@ -169,6 +173,7 @@ public class NavigationModeController implements Dumpable {
                 mListeners.get(i).onNavigationModeChanged(mode);
             }
         }
+        Trace.endSection();
     }
 
     public int addListener(ModeChangedListener listener) {
@@ -196,7 +201,7 @@ public class NavigationModeController implements Dumpable {
     }
 
     public Context getCurrentUserContext() {
-        int userId = ActivityManagerWrapper.getInstance().getCurrentUserId();
+        int userId = mUserTracker.getUserId();
         if (DEBUG) {
             Log.d(TAG, "getCurrentUserContext: contextUser=" + mContext.getUserId()
                     + " currentUser=" + userId);

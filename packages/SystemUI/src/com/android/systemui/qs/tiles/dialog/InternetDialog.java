@@ -303,7 +303,6 @@ public class InternetDialog extends SystemUIDialog implements
         mHandler.removeCallbacks(mHideSearchingRunnable);
         mMobileNetworkLayout.setOnClickListener(null);
         mMobileNetworkLayout.setOnLongClickListener(null);
-        mMobileDataToggle.setOnCheckedChangeListener(null);
         mHotspotLayout.setOnClickListener(null);
         mHotspotToggle.setOnCheckedChangeListener(null);
         mConnectedWifListLayout.setOnClickListener(null);
@@ -384,18 +383,16 @@ public class InternetDialog extends SystemUIDialog implements
                 mInternetDialogController.launchMobileNetworkSetting(v);
                 return true;
         });
-        mMobileDataToggle.setOnCheckedChangeListener(
-                (buttonView, isChecked) -> {
-                    if (!isChecked && shouldShowMobileDialog()) {
-                        showTurnOffMobileDialog();
-                    } else if (!shouldShowMobileDialog()) {
-                        if (mInternetDialogController.isMobileDataEnabled() == isChecked) {
-                            return;
-                        }
-                        mInternetDialogController.setMobileDataEnabled(mContext, mDefaultDataSubId,
-                                isChecked, false);
-                    }
-                });
+        mMobileDataToggle.setOnClickListener(v -> {
+            boolean isChecked = mMobileDataToggle.isChecked();
+            if (!isChecked && shouldShowMobileDialog()) {
+                mMobileDataToggle.setChecked(true);
+                showTurnOffMobileDialog();
+            } else if (mInternetDialogController.isMobileDataEnabled() != isChecked) {
+                mInternetDialogController.setMobileDataEnabled(mContext, mDefaultDataSubId,
+                        isChecked, false);
+            }
+        });
         mHotspotLayout.setOnClickListener(mInternetDialogController::launchHotspotSetting);
         mHotspotToggle.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> mInternetDialogController.setHotspotEnabled(isChecked));
@@ -782,9 +779,7 @@ public class InternetDialog extends SystemUIDialog implements
         mAlertDialog = new Builder(mContext)
                 .setTitle(R.string.mobile_data_disable_title)
                 .setMessage(mContext.getString(R.string.mobile_data_disable_message, carrierName))
-                .setNegativeButton(android.R.string.cancel, (d, w) -> {
-                    mMobileDataToggle.setChecked(true);
-                })
+                .setNegativeButton(android.R.string.cancel, (d, w) -> {})
                 .setPositiveButton(
                         com.android.internal.R.string.alert_windows_notification_turn_off_action,
                         (d, w) -> {
@@ -794,7 +789,6 @@ public class InternetDialog extends SystemUIDialog implements
                             Prefs.putBoolean(mContext, QS_HAS_TURNED_OFF_MOBILE_DATA, true);
                         })
                 .create();
-        mAlertDialog.setOnCancelListener(dialog -> mMobileDataToggle.setChecked(true));
         mAlertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
         SystemUIDialog.setShowForAllUsers(mAlertDialog, true);
         SystemUIDialog.registerDismissListener(mAlertDialog);

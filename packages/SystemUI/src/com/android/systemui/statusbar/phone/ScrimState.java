@@ -121,9 +121,9 @@ public enum ScrimState {
     BOUNCER {
         @Override
         public void prepare(ScrimState previousState) {
-            mBehindAlpha = mClipQsScrim ? mQSClipScrimAlpha : mDefaultScrimAlpha;
-            mBehindTint = Color.TRANSPARENT;
-            mNotifAlpha = mClipQsScrim ? mQSClipScrimAlpha : 0;
+            mBehindAlpha = mClipQsScrim ? 1 : mDefaultScrimAlpha;
+            mBehindTint = mClipQsScrim ? Color.BLACK : mSurfaceColor;
+            mNotifAlpha = mClipQsScrim ? mDefaultScrimAlpha : 0;
             mNotifTint = Color.TRANSPARENT;
             mFrontAlpha = 0f;
         }
@@ -421,10 +421,6 @@ public enum ScrimState {
 
     public void setSurfaceColor(int surfaceColor) {
         mSurfaceColor = surfaceColor;
-    }
-
-    public void setQSClipScrimAlpha(float qsClipScrimAlpha) {
-        mQSClipScrimAlpha = qsClipScrimAlpha;
     }
 
     public void setWallpaperSupportsAmbientMode(boolean wallpaperSupportsAmbientMode) {

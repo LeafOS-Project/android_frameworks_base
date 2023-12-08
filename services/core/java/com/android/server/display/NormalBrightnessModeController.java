@@ -69,6 +69,14 @@ class NormalBrightnessModeController {
         return recalculateMaxBrightness();
     }
 
+    void dump(PrintWriter pw) {
+        pw.println("NormalBrightnessModeController:");
+        pw.println("  mAutoBrightnessEnabled=" + mAutoBrightnessEnabled);
+        pw.println("  mAmbientLux=" + mAmbientLux);
+        pw.println("  mMaxBrightness=" + mMaxBrightness);
+        pw.println("  mMaxBrightnessLimits=" + mMaxBrightnessLimits);
+    }
+
     private boolean recalculateMaxBrightness() {
         float foundAmbientBoundary = Float.MAX_VALUE;
         float foundMaxBrightness = PowerManager.BRIGHTNESS_MAX;

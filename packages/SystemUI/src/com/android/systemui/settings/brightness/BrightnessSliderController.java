@@ -26,6 +26,7 @@ import android.widget.SeekBar;
 
 import androidx.annotation.Nullable;
 
+import com.android.internal.logging.UiEventLogger;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.systemui.Gefingerpoken;
 import com.android.systemui.R;
@@ -54,6 +55,7 @@ public class BrightnessSliderController extends ViewController<BrightnessSliderV
     private BrightnessMirrorController mMirrorController;
     private boolean mTracking;
     private final FalsingManager mFalsingManager;
+    private final UiEventLogger mUiEventLogger;
 
     private final Gefingerpoken mOnInterceptListener = new Gefingerpoken() {
         @Override
@@ -74,9 +76,11 @@ public class BrightnessSliderController extends ViewController<BrightnessSliderV
 
     BrightnessSliderController(
             BrightnessSliderView brightnessSliderView,
-            FalsingManager falsingManager) {
+            FalsingManager falsingManager,
+            UiEventLogger uiEventLogger) {
         super(brightnessSliderView);
         mFalsingManager = falsingManager;
+        mUiEventLogger = uiEventLogger;
         mIcon = mView.findViewById(R.id.brightness_icon);
     }
 
@@ -212,7 +216,7 @@ public class BrightnessSliderController extends ViewController<BrightnessSliderV
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
             mTracking = true;
-
+            mUiEventLogger.log(BrightnessSliderEvent.SLIDER_STARTED_TRACKING_TOUCH);
             if (mListener != null) {
                 mListener.onChanged(mTracking, getValue(), false);
             }
@@ -226,7 +230,7 @@ public class BrightnessSliderController extends ViewController<BrightnessSliderV
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             mTracking = false;
-
+            mUiEventLogger.log(BrightnessSliderEvent.SLIDER_STOPPED_TRACKING_TOUCH);
             if (mListener != null) {
                 mListener.onChanged(mTracking, getValue(), true);
             }
@@ -243,10 +247,12 @@ public class BrightnessSliderController extends ViewController<BrightnessSliderV
     public static class Factory {
 
         private final FalsingManager mFalsingManager;
+        private final UiEventLogger mUiEventLogger;
 
         @Inject
-        public Factory(FalsingManager falsingManager) {
+        public Factory(FalsingManager falsingManager, UiEventLogger uiEventLogger) {
             mFalsingManager = falsingManager;
+            mUiEventLogger = uiEventLogger;
         }
 
         /**
@@ -256,11 +262,13 @@ public class BrightnessSliderController extends ViewController<BrightnessSliderV
          * @param viewRoot the {@link ViewGroup} that will contain the hierarchy. The inflated
          *                 hierarchy will not be attached
          */
-        public BrightnessSliderController create(Context context, @Nullable ViewGroup viewRoot) {
+        public BrightnessSliderController create(
+                Context context,
+                @Nullable ViewGroup viewRoot) {
             int layout = getLayout();
             BrightnessSliderView root = (BrightnessSliderView) LayoutInflater.from(context)
                     .inflate(layout, viewRoot, false);
-            return new BrightnessSliderController(root, mFalsingManager);
+            return new BrightnessSliderController(root, mFalsingManager, mUiEventLogger);
         }
 
         /** Get the layout to inflate based on what slider to use */

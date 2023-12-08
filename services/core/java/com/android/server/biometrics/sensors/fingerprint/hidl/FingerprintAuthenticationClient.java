@@ -30,7 +30,6 @@ import android.hardware.fingerprint.FingerprintAuthenticateOptions;
 import android.hardware.fingerprint.FingerprintManager;
 import android.hardware.fingerprint.FingerprintSensorPropertiesInternal;
 import android.hardware.fingerprint.ISidefpsController;
-import android.hardware.fingerprint.IUdfpsOverlay;
 import android.hardware.fingerprint.IUdfpsOverlayController;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -84,7 +83,6 @@ class FingerprintAuthenticationClient
             @NonNull LockoutFrameworkImpl lockoutTracker,
             @Nullable IUdfpsOverlayController udfpsOverlayController,
             @Nullable ISidefpsController sidefpsController,
-            @Nullable IUdfpsOverlay udfpsOverlay,
             boolean allowBackgroundAuthentication,
             @NonNull FingerprintSensorPropertiesInternal sensorProps,
             @Authenticators.Types int sensorStrength) {
@@ -95,8 +93,7 @@ class FingerprintAuthenticationClient
         setRequestId(requestId);
         mUdfpsOverlayController = udfpsOverlayController;
         mLockoutFrameworkImpl = lockoutTracker;
-        mSensorOverlays = new SensorOverlays(udfpsOverlayController,
-                sidefpsController, udfpsOverlay);
+        mSensorOverlays = new SensorOverlays(udfpsOverlayController, sidefpsController);
         mSensorProps = sensorProps;
         mALSProbeCallback = getLogger().getAmbientLightProbe(false /* startWithClient */);
     }

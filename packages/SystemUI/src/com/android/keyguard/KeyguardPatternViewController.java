@@ -241,7 +241,14 @@ public class KeyguardPatternViewController
                 getKeyguardSecurityCallback().onCancelClicked();
             });
         }
+        mView.onDevicePostureChanged(mPostureController.getDevicePosture());
         mPostureController.addCallback(mPostureCallback);
+        // if the user is currently locked out, enforce it.
+        long deadline = mLockPatternUtils.getLockoutAttemptDeadline(
+                KeyguardUpdateMonitor.getCurrentUser());
+        if (deadline != 0) {
+            handleAttemptLockout(deadline);
+        }
     }
 
     @Override
@@ -272,12 +279,6 @@ public class KeyguardPatternViewController
     @Override
     public void onResume(int reason) {
         super.onResume(reason);
-        // if the user is currently locked out, enforce it.
-        long deadline = mLockPatternUtils.getLockoutAttemptDeadline(
-                KeyguardUpdateMonitor.getCurrentUser());
-        if (deadline != 0) {
-            handleAttemptLockout(deadline);
-        }
     }
 
     @Override
@@ -373,6 +374,7 @@ public class KeyguardPatternViewController
         final long elapsedRealtime = SystemClock.elapsedRealtime();
         final long secondsInFuture = (long) Math.ceil(
                 (elapsedRealtimeDeadline - elapsedRealtime) / 1000.0);
+        getKeyguardSecurityCallback().onAttemptLockoutStart(secondsInFuture);
         mCountdownTimer = new CountDownTimer(secondsInFuture * 1000, 1000) {
 
             @Override

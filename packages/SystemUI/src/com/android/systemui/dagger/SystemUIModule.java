@@ -23,7 +23,6 @@ import android.service.dreams.IDreamManager;
 import androidx.annotation.Nullable;
 
 import com.android.internal.statusbar.IStatusBarService;
-import com.android.keyguard.clock.ClockInfoModule;
 import com.android.keyguard.dagger.ClockRegistryModule;
 import com.android.keyguard.dagger.KeyguardBouncerComponent;
 import com.android.systemui.BootCompleteCache;
@@ -39,6 +38,7 @@ import com.android.systemui.biometrics.FingerprintReEnrollNotification;
 import com.android.systemui.biometrics.UdfpsDisplayModeProvider;
 import com.android.systemui.biometrics.dagger.BiometricsModule;
 import com.android.systemui.biometrics.dagger.UdfpsModule;
+import com.android.systemui.bouncer.ui.BouncerViewModule;
 import com.android.systemui.classifier.FalsingModule;
 import com.android.systemui.clipboardoverlay.dagger.ClipboardOverlayModule;
 import com.android.systemui.common.ui.data.repository.CommonRepositoryModule;
@@ -47,6 +47,7 @@ import com.android.systemui.controls.dagger.ControlsModule;
 import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.dagger.qualifiers.SystemUser;
 import com.android.systemui.demomode.dagger.DemoModeModule;
+import com.android.systemui.display.DisplayModule;
 import com.android.systemui.doze.dagger.DozeComponent;
 import com.android.systemui.dreams.dagger.DreamModule;
 import com.android.systemui.dump.DumpManager;
@@ -54,11 +55,13 @@ import com.android.systemui.flags.FeatureFlags;
 import com.android.systemui.flags.FlagsModule;
 import com.android.systemui.keyboard.KeyboardModule;
 import com.android.systemui.keyguard.data.BouncerViewModule;
+import com.android.systemui.keyguard.ui.view.layout.blueprints.KeyguardBlueprintModule;
 import com.android.systemui.leaf.LeafModule;
 import com.android.systemui.log.dagger.LogModule;
 import com.android.systemui.log.dagger.MonitorLog;
 import com.android.systemui.log.table.TableLogBuffer;
 import com.android.systemui.mediaprojection.appselector.MediaProjectionModule;
+import com.android.systemui.mediaprojection.taskswitcher.MediaProjectionTaskSwitcherModule;
 import com.android.systemui.model.SysUiState;
 import com.android.systemui.motiontool.MotionToolModule;
 import com.android.systemui.navigationbar.NavigationBarComponent;
@@ -75,12 +78,12 @@ import com.android.systemui.qs.QSFragmentStartableModule;
 import com.android.systemui.qs.footer.dagger.FooterActionsModule;
 import com.android.systemui.recents.Recents;
 import com.android.systemui.retail.dagger.RetailModeModule;
+import com.android.systemui.scene.SceneContainerFrameworkModule;
 import com.android.systemui.screenrecord.ScreenRecordModule;
 import com.android.systemui.screenshot.dagger.ScreenshotModule;
 import com.android.systemui.security.data.repository.SecurityRepositoryModule;
 import com.android.systemui.settings.DisplayTracker;
 import com.android.systemui.shade.ShadeController;
-import com.android.systemui.shade.ShadeModule;
 import com.android.systemui.shade.transition.LargeScreenShadeInterpolator;
 import com.android.systemui.shade.transition.LargeScreenShadeInterpolatorImpl;
 import com.android.systemui.shared.condition.Monitor;
@@ -89,6 +92,7 @@ import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.NotificationLockscreenUserManager;
 import com.android.systemui.statusbar.NotificationShadeWindowController;
 import com.android.systemui.statusbar.connectivity.ConnectivityModule;
+import com.android.systemui.statusbar.disableflags.dagger.DisableFlagsModule;
 import com.android.systemui.statusbar.events.SystemStatusAnimationScheduler;
 import com.android.systemui.statusbar.notification.NotifPipelineFlags;
 import com.android.systemui.statusbar.notification.collection.NotifPipeline;
@@ -105,6 +109,7 @@ import com.android.systemui.statusbar.notification.row.dagger.NotificationRowCom
 import com.android.systemui.statusbar.notification.row.dagger.NotificationShelfComponent;
 import com.android.systemui.statusbar.phone.CentralSurfaces;
 import com.android.systemui.statusbar.phone.LetterboxModule;
+import com.android.systemui.statusbar.phone.NotificationIconAreaControllerModule;
 import com.android.systemui.statusbar.phone.dagger.CentralSurfacesComponent;
 import com.android.systemui.statusbar.pipeline.dagger.StatusBarPipelineModule;
 import com.android.systemui.statusbar.policy.HeadsUpManager;
@@ -162,14 +167,15 @@ import javax.inject.Named;
             BiometricsModule.class,
             BouncerViewModule.class,
             ClipboardOverlayModule.class,
-            ClockInfoModule.class,
             ClockRegistryModule.class,
             CommonRepositoryModule.class,
+            DisplayModule.class,
             ConnectivityModule.class,
             CoroutinesModule.class,
             DreamModule.class,
             ControlsModule.class,
             DemoModeModule.class,
+            DisableFlagsModule.class,
             FalsingModule.class,
             FlagsModule.class,
             SystemPropertiesFlagsModule.class,
@@ -178,9 +184,12 @@ import javax.inject.Named;
             KeyboardModule.class,
             LeafModule.class,
             LetterboxModule.class,
+            KeyguardBlueprintModule.class,
             LogModule.class,
             MediaProjectionModule.class,
+            MediaProjectionTaskSwitcherModule.class,
             MotionToolModule.class,
+            NotificationIconAreaControllerModule.class,
             PeopleHubModule.class,
             PeopleModule.class,
             PluginModule.class,
@@ -189,12 +198,12 @@ import javax.inject.Named;
             QRCodeScannerModule.class,
             QSFragmentStartableModule.class,
             RetailModeModule.class,
+            SceneContainerFrameworkModule.class,
             ScreenshotModule.class,
             SensorModule.class,
             SecurityRepositoryModule.class,
             ScreenRecordModule.class,
             SettingsUtilModule.class,
-            ShadeModule.class,
             SmartRepliesInflationModule.class,
             SmartspaceModule.class,
             StatusBarPipelineModule.class,
