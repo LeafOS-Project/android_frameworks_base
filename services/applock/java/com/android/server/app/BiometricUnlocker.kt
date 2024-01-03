@@ -46,7 +46,7 @@ internal class BiometricUnlocker(private val context: Context) {
      */
     fun canUnlock(): Boolean =
         biometricManager?.canAuthenticate(
-            Authenticators.BIOMETRIC_STRONG or
+            Authenticators.BIOMETRIC_WEAK or
                 Authenticators.DEVICE_CREDENTIAL
         ) == BiometricManager.BIOMETRIC_SUCCESS
 
