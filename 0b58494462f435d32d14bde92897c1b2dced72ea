@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a7a9932f_6bd13455",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000025
+      },
+      "writtenOn": "2024-01-10T17:22:36Z",
+      "side": 1,
+      "message": "SafetyNet does passes, but Play Integrity\u0027s DEVICE verdict fails, seems like Google banned it",
+      "revId": "0b58494462f435d32d14bde92897c1b2dced72ea",
+      "serverId": "b49086b3-c06c-47ea-b69e-65c8379e1be6"
+    }
+  ]
+}
