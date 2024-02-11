@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6c921d37_ef4d0dd6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000029
+      },
+      "writtenOn": "2024-02-11T20:47:52Z",
+      "side": 1,
+      "message": "It looks like google has already blacklisted this key. Even with this commit PlayIntegrity fails",
+      "revId": "03f9443afa7536c0b04ce920821e5f5643852997",
+      "serverId": "b49086b3-c06c-47ea-b69e-65c8379e1be6"
+    }
+  ]
+}
