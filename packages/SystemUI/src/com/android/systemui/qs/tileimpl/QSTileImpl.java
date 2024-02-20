@@ -38,6 +38,8 @@ import android.metrics.LogMaker;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Vibrator;
+import android.os.VibrationEffect;
 import android.text.format.DateUtils;
 import android.util.ArraySet;
 import android.util.Log;
@@ -123,6 +125,11 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
     private boolean mShowingDetail;
     private int mIsFullQs;
 
+    private final boolean mHasVibrator;
+    private final Vibrator mVibrator;
+    private static final VibrationEffect QS_TILE_TOUCH_HAPTIC =
+            VibrationEffect.get(VibrationEffect.EFFECT_TICK);
+
     private final LifecycleRegistry mLifecycle = new LifecycleRegistry(this);
 
     /**
@@ -203,6 +210,9 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
 
         resetStates();
         mUiHandler.post(() -> mLifecycle.setCurrentState(CREATED));
+
+        mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+        mHasVibrator = mVibrator != null && mVibrator.hasVibrator();
     }
 
     protected final void resetStates() {
@@ -284,6 +294,7 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
     }
 
     public void click(@Nullable View view) {
+        if (mHasVibrator) mVibrator.vibrate(QS_TILE_TOUCH_HAPTIC);
         mMetricsLogger.write(populate(new LogMaker(ACTION_QS_CLICK).setType(TYPE_ACTION)
                 .addTaggedData(FIELD_STATUS_BAR_STATE,
                         mStatusBarStateController.getState())));
