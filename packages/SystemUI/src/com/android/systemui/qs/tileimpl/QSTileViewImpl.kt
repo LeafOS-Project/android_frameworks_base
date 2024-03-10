@@ -29,7 +29,6 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.RippleDrawable
-import android.graphics.drawable.GradientDrawable
 import android.os.Trace
 import android.provider.Settings
 import android.service.quicksettings.Tile
@@ -653,9 +652,6 @@ open class QSTileViewImpl @JvmOverloads constructor(
                     getBackgroundColorForState(state.state, state.disabledByPolicy))
             if (allowAnimations) {
                 if (isRoundQS()) {
-                    shapeAnimator.setFloatValues(
-                        (backgroundDrawable as GradientDrawable).cornerRadius,
-                        getCornerRadiusForState(state.state)
                 )
                 }
                 singleAnimator.setValues(
@@ -771,8 +767,6 @@ open class QSTileViewImpl @JvmOverloads constructor(
     }
 
     private fun setCornerRadius(cornerRadius: Float) {
-        val mBg = ripple.findDrawableByLayerId(R.id.background) as GradientDrawable
-        mBg.cornerRadius = cornerRadius
     }
 
     private fun getCornerRadiusForState(state: Int): Float {
