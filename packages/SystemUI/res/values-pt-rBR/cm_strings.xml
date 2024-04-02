@@ -32,4 +32,5 @@
     <string name="quick_settings_caffeine_label">Cafeína</string>
     <string name="accessibility_quick_settings_caffeine_off">Cafeína desligado.</string>
     <string name="accessibility_quick_settings_caffeine_on">Cafeína ligado.</string>
+    <string name="status_bar_icons_title">Ícones da barra de status</string>
 </resources>

@@ -21,16 +21,14 @@
     <string name="global_action_restart_system">Сістэма</string>
     <string name="global_action_restart_recovery">Аднаўленне</string>
     <string name="global_action_restart_bootloader">Загрузчык</string>
+    <string name="global_action_restart_download">Спампоўка</string>
     <string name="global_action_restart_fastboot">Fastbootd</string>
     <string name="global_action_restart_progress">Перазапуск\u2026</string>
-    <string name="global_action_restart_recovery_progress">Перазапуск у рэжым аднаўлення\u2026</string>
-    <string name="global_action_restart_bootloader_progress">Перазапуск у рэжым загрузчыка\u2026</string>
-    <string name="global_action_restart_fastboot_progress">Перазапуск у рэжым fastbootd\u2026</string>
     <string name="quick_settings_powershare_label">Бесправадны PowerShare</string>
     <string name="quick_settings_powershare_off_powersave_label">Бесправадны PowerShare выключаны\nЭканомія акумулятара</string>
     <string name="quick_settings_powershare_off_low_battery_label">Бесправадны PowerShare выключаны\nНізкі зарад акумулятара</string>
     <string name="quick_settings_powershare_enabled_label">Бесправадны PowerShare уключаны</string>
     <string name="quick_settings_caffeine_label">Кафеін</string>
-    <string name="accessibility_quick_settings_caffeine_off">Кафеін выключаны</string>
-    <string name="accessibility_quick_settings_caffeine_on">Кафеін уключаны</string>
+    <string name="accessibility_quick_settings_caffeine_off">Кафеін выключаны.</string>
+    <string name="accessibility_quick_settings_caffeine_on">Кафеін уключаны.</string>
 </resources>

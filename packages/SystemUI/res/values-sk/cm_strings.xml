@@ -23,12 +23,12 @@
     <string name="global_action_restart_recovery">Recovery</string>
     <string name="global_action_restart_bootloader">Bootloader</string>
     <string name="global_action_restart_download">Sťahovanie</string>
-    <string name="global_action_restart_fastboot">Fastboot</string>
+    <string name="global_action_restart_fastboot">Fastbootd</string>
     <string name="global_action_restart_progress">Reštartovanie\u2026</string>
     <string name="global_action_restart_recovery_progress">Reštartovanie do režimu Recovery\u2026</string>
     <string name="global_action_restart_bootloader_progress">Reštartovanie do režimu Bootloader\u2026</string>
     <string name="global_action_restart_download_progress">Reštartovanie do režimu sťahovania\u2026</string>
-    <string name="global_action_restart_fastboot_progress">Reštartovanie do režimu fastboot\u2026</string>
+    <string name="global_action_restart_fastboot_progress">Reštartovanie do režimu fastbootd\u2026</string>
     <string name="quick_settings_powershare_label">Bezdrôtové reverzné nabíjanie PowerShare</string>
     <string name="quick_settings_powershare_off_powersave_label">Bezdrôtové reverzné nabíjanie PowerShare vypnuté\nŠetrenie batérie</string>
     <string name="quick_settings_powershare_off_low_battery_label">Bezdrôtové reverzné nabíjanie PowerShare vypnuté\nSlabá batéria</string>
