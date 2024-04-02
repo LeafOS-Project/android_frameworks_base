@@ -36,4 +36,5 @@
     <string name="quick_settings_caffeine_label">Caffîn</string>
     <string name="accessibility_quick_settings_caffeine_off">Caffîn i ffwrdd.</string>
     <string name="accessibility_quick_settings_caffeine_on">Caffîn ymlaen.</string>
+    <string name="status_bar_icons_title">Eiconau\'r bar statws</string>
 </resources>
