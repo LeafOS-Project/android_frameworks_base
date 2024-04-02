@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/**
+ * Copyright (c) 2015, The CyanogenMod Project
+ * Copyright (c) 2017-2021 The LineageOS Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="global_action_restart_more">အစမှ ပြန်စတင်မည် \u2026</string>
+    <string name="global_action_restart_system">စနစ်</string>
+    <string name="global_action_restart_recovery">ပြန်လည်ရယူခြင်း</string>
+    <string name="global_action_restart_bootloader">Bootloader</string>
+    <string name="global_action_restart_download">ဒေါင်းလုပ်မုဒ်</string>
+    <string name="global_action_restart_fastboot">Fastbootd</string>
+    <string name="global_action_restart_progress">အစမှ ပြန်စတင်နေသည် \u2026</string>
+    <string name="global_action_restart_recovery_progress">ပြန်လည်ဆယ်ယူခြင်းမုဒ်ကို ပြန်စတင်နေသည် \u2026</string>
+    <string name="global_action_restart_bootloader_progress">Bootloader မုဒ်ကို ပြန်စတင်နေသည် \u2026</string>
+    <string name="global_action_restart_download_progress">ဒေါင်းလုပ်မုဒ်ကို ပြန်စတင်နေသည် \u2026</string>
+    <string name="global_action_restart_fastboot_progress">Fastbootd မုဒ်ကို ပြန်စတင်နေသည် \u2026</string>
+    <string name="quick_settings_powershare_label">ကြိုးမဲ့အားသွင်းစနစ်မျှဝေသုံးခြင်း</string>
+    <string name="quick_settings_powershare_off_powersave_label">ဘက်ထရီချွေတာချိန်တွင်\n ကြိုးမဲ့အားသွင်းစနစ်မျှဝေသုံးခြင်းကိုပိတ်မည်</string>
+    <string name="quick_settings_powershare_off_low_battery_label">ဘက်ထရီအားနည်းချိန်တွင်\n ကြိုးမဲ့အားသွင်းစနစ်မျှဝေသုံးခြင်းကိုပိတ်မည်</string>
+    <string name="quick_settings_powershare_enabled_label">ကြိုးမဲ့အားသွင်းစနစ်မျှဝေသုံးခြင်းအားပိတ်မည်</string>
+    <string name="quick_settings_caffeine_label">ကဖင်းမုဒ်</string>
+    <string name="accessibility_quick_settings_caffeine_off">ကဖင်းစနစ်ပိတ်မည်</string>
+    <string name="accessibility_quick_settings_caffeine_on">ကဖင်းစနစ်ဖွင့်မည်။</string>
+</resources>

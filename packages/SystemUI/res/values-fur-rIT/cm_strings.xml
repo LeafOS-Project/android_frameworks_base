@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/**
+ * Copyright (c) 2015, The CyanogenMod Project
+ * Copyright (c) 2017-2021 The LineageOS Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="global_action_restart_more">Gnûf inviament\u2026</string>
+    <string name="global_action_restart_system">Sisteme</string>
+    <string name="global_action_restart_recovery">Recovery</string>
+    <string name="global_action_restart_bootloader">Bootloader</string>
+    <string name="global_action_restart_download">Download</string>
+    <string name="global_action_restart_fastboot">Fastbootd</string>
+    <string name="global_action_restart_progress">Gnûf inviament\u2026</string>
+    <string name="global_action_restart_recovery_progress">Gnûf inviament in modalitât recovery\u2026</string>
+    <string name="global_action_restart_bootloader_progress">Gnûf inviament in modalitât bootloader\u2026</string>
+    <string name="global_action_restart_download_progress">Gnûf inviament in modalitât download\u2026</string>
+    <string name="global_action_restart_fastboot_progress">Gnûf inviament in modalitât fastbootd\u2026</string>
+    <string name="quick_settings_powershare_label">Wireless PowerShare</string>
+    <string name="quick_settings_powershare_off_powersave_label">Wireless PowerShare distudât\nSparagn energjetic</string>
+    <string name="quick_settings_powershare_off_low_battery_label">Wireless PowerShare distudât\nCjarie de batarie masse basse</string>
+    <string name="quick_settings_powershare_enabled_label">Wireless PowerShare atîf</string>
+    <string name="quick_settings_caffeine_label">Cafeine</string>
+    <string name="accessibility_quick_settings_caffeine_off">Disative cafeine.</string>
+    <string name="accessibility_quick_settings_caffeine_on">Ative cafeine.</string>
+    <string name="status_bar_icons_title">Iconis de sbare di stât</string>
+</resources>
