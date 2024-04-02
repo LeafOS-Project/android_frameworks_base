@@ -36,4 +36,5 @@
     <string name="quick_settings_caffeine_label">カフェイン</string>
     <string name="accessibility_quick_settings_caffeine_off">カフェインはOFFです。</string>
     <string name="accessibility_quick_settings_caffeine_on">カフェインはONです。</string>
+    <string name="status_bar_icons_title">ステータスバーのアイコン</string>
 </resources>

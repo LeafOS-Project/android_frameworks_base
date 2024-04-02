@@ -36,4 +36,5 @@
     <string name="quick_settings_caffeine_label">Kofein</string>
     <string name="accessibility_quick_settings_caffeine_off">Kofein vyp.</string>
     <string name="accessibility_quick_settings_caffeine_on">Kofein zap.</string>
+    <string name="status_bar_icons_title">Ikony stavového řádku</string>
 </resources>
