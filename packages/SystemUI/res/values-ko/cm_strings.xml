@@ -36,4 +36,5 @@
     <string name="quick_settings_caffeine_label">카페인</string>
     <string name="accessibility_quick_settings_caffeine_off">카페인 꺼짐.</string>
     <string name="accessibility_quick_settings_caffeine_on">카페인 켜짐.</string>
+    <string name="status_bar_icons_title">상태 표시줄 아이콘</string>
 </resources>
