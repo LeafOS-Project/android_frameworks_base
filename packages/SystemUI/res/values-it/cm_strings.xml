@@ -36,4 +36,5 @@
     <string name="quick_settings_caffeine_label">Caffeina</string>
     <string name="accessibility_quick_settings_caffeine_off">Caffeina off.</string>
     <string name="accessibility_quick_settings_caffeine_on">Caffeina on.</string>
+    <string name="status_bar_icons_title">Icone della barra di stato</string>
 </resources>
