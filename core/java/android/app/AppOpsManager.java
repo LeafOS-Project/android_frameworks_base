@@ -1540,8 +1540,11 @@ public class AppOpsManager {
             AppProtoEnums.APP_OP_RAPID_CLEAR_NOTIFICATIONS_BY_LISTENER;
 
     /** @hide */
+    public static final int OP_SU = AppProtoEnums.APP_OP_SU;
+
+    /** @hide */
     @UnsupportedAppUsage(maxTargetSdk = Build.VERSION_CODES.R, trackingBug = 170729553)
-    public static final int _NUM_OP = 143;
+    public static final int _NUM_OP = 144;
 
     /**
      * All app ops represented as strings.
@@ -2372,6 +2375,9 @@ public class AppOpsManager {
     public static final String OPSTR_RAPID_CLEAR_NOTIFICATIONS_BY_LISTENER =
             "android:rapid_clear_notifications_by_listener";
 
+    /** @hide */
+    public static final String OPSTR_SU = "android:su";
+
     /** {@link #sAppOpsToNote} not initialized yet for this op */
     private static final byte SHOULD_COLLECT_NOTE_OP_NOT_INITIALIZED = 0;
     /** Should not collect noting of this app-op in {@link #sAppOpsToNote} */
@@ -2935,6 +2941,8 @@ public class AppOpsManager {
                 OPSTR_RAPID_CLEAR_NOTIFICATIONS_BY_LISTENER,
                 "RAPID_CLEAR_NOTIFICATIONS_BY_LISTENER")
                 .setDefaultMode(AppOpsManager.MODE_ALLOWED).build(),
+        new AppOpInfo.Builder(OP_SU, OPSTR_SU, "SU")
+                .setPermission(Manifest.permission.SUPERUSER).build(),
     };
 
     // The number of longs needed to form a full bitmask of app ops

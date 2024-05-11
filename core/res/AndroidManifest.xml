@@ -7878,6 +7878,11 @@
     <permission android:name="com.android.permission.MANAGE_APP_LOCK"
                 android:protectionLevel="signature|privileged" />
 
+    <!-- Allows an application to use su
+         @hide -->
+    <permission android:name="com.android.permission.SUPERUSER"
+                android:protectionLevel="dangerous" />
+
     <!-- Attribution for Geofencing service. -->
     <attribution android:tag="GeofencingService" android:label="@string/geofencing_service"/>
     <!-- Attribution for Country Detector. -->
