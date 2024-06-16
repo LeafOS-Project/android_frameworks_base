@@ -71,6 +71,7 @@ public class LockoutFrameworkImpl implements LockoutTracker {
         void onLockoutReset(int userId);
     }
 
+    private final Context mContext;
     private final LockoutResetCallback mLockoutResetCallback;
     private final SparseBooleanArray mTimedLockoutCleared;
     private final SparseIntArray mFailedAttempts;
@@ -101,6 +102,7 @@ public class LockoutFrameworkImpl implements LockoutTracker {
             @NonNull LockoutResetCallback lockoutResetCallback,
             @NonNull Function<Integer, PendingIntent> lockoutResetIntent,
             @Nullable Handler handler) {
+        mContext = context;
         mLockoutResetCallback = lockoutResetCallback;
         mTimedLockoutCleared = new SparseBooleanArray();
         mFailedAttempts = new SparseIntArray();
