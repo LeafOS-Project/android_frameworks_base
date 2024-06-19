@@ -426,6 +426,7 @@ java_defaults {
         "audiopolicy-aidl-java",
         "sounddose-aidl-java",
         "modules-utils-expresslog",
+        "com.madgag.spongycastle_bcpkix-jdk15on",
     ],
 }
 
