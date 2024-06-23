@@ -16,8 +16,8 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="charging_control_notification_channel">Enerji yığma kontrolu</string>
-    <string name="charging_control_notification_title">Enerji yığma kontrolu</string>
+    <string name="charging_control_notification_channel">Doldurma nəzarəti</string>
+    <string name="charging_control_notification_title">Doldurma nəzarəti</string>
     <string name="charging_control_notification_cancel_once">İmtina</string>
     <string name="charging_control_notification_content_limit">Batareya %1$d%% doldurulacaq</string>
     <string name="charging_control_notification_content_limit_reached">Batareya %1$d%% doldu</string>
