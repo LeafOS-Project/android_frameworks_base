@@ -26,11 +26,15 @@
     <string name="global_action_restart_fastboot">Fastbootd</string>
     <string name="global_action_restart_progress">Reiniciando\u2026</string>
     <string name="global_action_restart_recovery_progress">Reiniciando no modo de recuperação\u2026</string>
-    <string name="global_action_restart_bootloader_progress">Reiniciando no modo de bootloader\u2026</string>
+    <string name="global_action_restart_bootloader_progress">Reiniciando no modo bootloader\u2026</string>
     <string name="global_action_restart_download_progress">Reiniciando no modo de download\u2026</string>
     <string name="global_action_restart_fastboot_progress">Reiniciando no modo fastbootd\u2026</string>
+    <string name="quick_settings_powershare_label">Wireless PowerShare</string>
+    <string name="quick_settings_powershare_off_powersave_label">Wireless PowerShare desligado\nEconomia de bateria</string>
+    <string name="quick_settings_powershare_off_low_battery_label">Wireless PowerShare desligado\nBateria muito fraca</string>
+    <string name="quick_settings_powershare_enabled_label">O Wireless PowerShare está ativado</string>
     <string name="quick_settings_caffeine_label">Cafeína</string>
-    <string name="accessibility_quick_settings_caffeine_off">Cafeína desligado.</string>
-    <string name="accessibility_quick_settings_caffeine_on">Cafeína ligado.</string>
+    <string name="accessibility_quick_settings_caffeine_off">Cafeína desligada.</string>
+    <string name="accessibility_quick_settings_caffeine_on">Cafeína ligada.</string>
     <string name="status_bar_icons_title">Ícones da barra de status</string>
 </resources>
