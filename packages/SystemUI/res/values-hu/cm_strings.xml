@@ -36,4 +36,5 @@
     <string name="quick_settings_caffeine_label">Caffeine</string>
     <string name="accessibility_quick_settings_caffeine_off">Caffeine ki.</string>
     <string name="accessibility_quick_settings_caffeine_on">Caffeine be.</string>
+    <string name="status_bar_icons_title">Az állapotsor ikonjai</string>
 </resources>
