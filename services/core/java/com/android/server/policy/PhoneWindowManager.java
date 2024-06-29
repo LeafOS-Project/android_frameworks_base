@@ -6944,7 +6944,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             // extcon event state changes from kernel4.9
             // new state will be like STATE=HDMI=1
             // or like STATE=DP=1 for newer kernel
-            return state.contains(HDMI_EXIST) || state.contains(DP_EXIST);
+            return state != null && (state.contains(HDMI_EXIST) || state.contains(DP_EXIST));
         }
     }
 
