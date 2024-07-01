@@ -562,6 +562,7 @@ final class WiredAccessoryManager implements WiredAccessoryCallbacks {
      */
     private static void updateBit(int[] maskAndState, int position, String state, String name) {
         maskAndState[0] |= position;
+        if (state == null) return;
         if (state.contains(name + "=1")) {
             maskAndState[0] |= position;
             maskAndState[1] |= position;
