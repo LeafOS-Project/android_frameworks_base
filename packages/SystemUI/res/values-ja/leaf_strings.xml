@@ -1,2 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="qs_data_switch_label">データカードを切り替え</string>
+    <string name="quick_settings_compass_value"><xliff:g id="degrees">%1$.0f</xliff:g>° <xliff:g id="direction">%2$s</xliff:g></string>
+    <string name="quick_settings_compass_W">西</string>
+    <string name="accessibility_quick_settings_compass_changed_off">コンパスを OFF にしました</string>
+    <string name="qs_data_switch_changed_2">データカードを SIM 2 に切り替えました。</string>
+    <string name="screenshot_delete_description">スクリーンショットを削除</string>
+    <string name="network_traffic_summary">ステータスバーのネットワーク速度インジケーターを有効化または無効化します</string>
+    <string name="quick_settings_compass_label">コンパス</string>
+    <plurals name="quick_settings_internet_hotspot_summary_num_devices">
+        <item quantity="other">%d 台のデバイスが接続されています</item>
+    </plurals>
+    <string name="quick_settings_compass_SW">南西</string>
+    <string name="status_bar_roaming">ローミングインジケーター</string>
+    <string name="qs_data_switch_text_2">SIM 2</string>
+    <string name="accessibility_quick_settings_compass_off">コンパス OFF</string>
+    <string name="status_bar_vpn">VPN</string>
+    <string name="screenshot_delete_label">削除</string>
+    <string name="usage_data_default_suffix">データ</string>
+    <string name="quick_settings_compass_NE">北東</string>
+    <string name="quick_settings_compass_N">北</string>
+    <string name="accessibility_quick_settings_compass_on">コンパス ON</string>
+    <string name="show_fourg_icon_title">4G アイコン</string>
+    <string name="usage_wifi_default_suffix">Wi-Fi</string>
+    <string name="qs_data_switch_toast_0">SIM カードが挿入されていません</string>
+    <string name="network_traffic_title">ネットワークトラフィックインジケーター</string>
+    <string name="usage_data">本日の使用量</string>
+    <string name="quick_settings_compass_SE">南東</string>
+    <string name="qs_data_switch_text_1">SIM 1</string>
+    <string name="quick_settings_compass_NW">北西</string>
+    <string name="quick_settings_compass_init">初期化中…</string>
+    <string name="accessibility_quick_settings_compass_changed_on">コンパスを ON にしました</string>
+    <string name="quick_settings_compass_S">南</string>
+    <string name="status_bar_data_saver">データセーバー</string>
+    <string name="show_fourg_icon_summary">ステータスバーに LTE アイコンではなく 4G アイコンを表示します</string>
+    <string name="qs_data_switch_changed_1">データカードを SIM 1 に切り替えました。</string>
+    <string name="qs_data_switch_toast_1">SIM カードは 1 枚のみ挿入されています</string>
+    <string name="quick_settings_compass_E">東</string>
+</resources>
