@@ -136,7 +136,7 @@ public class ShutdownUi {
      * @param reason Cause for the shutdown.
      */
     public void showShutdownUi(boolean isReboot, String reason) {
-        showShutdownUi(isReboot, reason);
+        showShutdownUi(isReboot, reason, false);
     }
 
     /**
