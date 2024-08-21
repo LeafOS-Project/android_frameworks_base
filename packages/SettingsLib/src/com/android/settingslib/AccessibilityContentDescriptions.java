@@ -70,7 +70,7 @@ public class AccessibilityContentDescriptions {
 
     /**
      * @param level int in range [0-5] that describes the inflated signal level
-     * @param numberOfLevels one of (4, 5) that describes the default number of levels, or the
+     * @param numberOfLevels one of (5, 6) that describes the default number of levels, or the
      *                       inflated number of levels. The level param should be relative to the
      *                       number of levels. This won't do any inflation.
      * @return the appropriate content description for that signal strength, or 0 if the param is

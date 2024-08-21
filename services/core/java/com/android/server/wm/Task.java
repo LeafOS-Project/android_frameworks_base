@@ -364,6 +364,10 @@ class Task extends TaskFragment {
      * user wants to return to it. */
     private WindowProcessController mRootProcess;
 
+    /** The TF host info are set once the task has ever added an organized task fragment. */
+    int mTaskFragmentHostUid;
+    String mTaskFragmentHostProcessName;
+
     /** Takes on same value as first root activity */
     boolean isPersistable = false;
     int maxRecents;
@@ -1468,6 +1472,11 @@ class Task extends TaskFragment {
         // passed from Task constructor.
         final TaskFragment childTaskFrag = child.asTaskFragment();
         if (childTaskFrag != null && childTaskFrag.asTask() == null) {
+            if (childTaskFrag.mTaskFragmentOrganizerProcessName != null
+                    && mTaskFragmentHostProcessName == null) {
+                mTaskFragmentHostUid = childTaskFrag.mTaskFragmentOrganizerUid;
+                mTaskFragmentHostProcessName = childTaskFrag.mTaskFragmentOrganizerProcessName;
+            }
             childTaskFrag.setMinDimensions(mMinWidth, mMinHeight);
 
             // The starting window should keep covering its task when a pure TaskFragment is added
@@ -3532,6 +3541,8 @@ class Task extends TaskFragment {
         // Whether the direct top activity is eligible for letterbox education.
         appCompatTaskInfo.topActivityEligibleForLetterboxEducation = isTopActivityResumed
                 && top.isEligibleForLetterboxEducation();
+        appCompatTaskInfo.isLetterboxEducationEnabled = top != null
+                && top.mLetterboxUiController.isLetterboxEducationEnabled();
         // Whether the direct top activity requested showing camera compat control.
         appCompatTaskInfo.cameraCompatControlState = isTopActivityResumed
                 ? top.getCameraCompatControlState()
@@ -3546,8 +3557,6 @@ class Task extends TaskFragment {
         info.isVisibleRequested = isVisibleRequested();
         info.isSleeping = shouldSleepActivities();
         info.isTopActivityTransparent = top != null && !top.fillsParent();
-        appCompatTaskInfo.isLetterboxDoubleTapEnabled = top != null
-                && top.mLetterboxUiController.isLetterboxDoubleTapEducationEnabled();
         appCompatTaskInfo.topActivityLetterboxVerticalPosition = TaskInfo.PROPERTY_VALUE_UNSET;
         appCompatTaskInfo.topActivityLetterboxHorizontalPosition = TaskInfo.PROPERTY_VALUE_UNSET;
         appCompatTaskInfo.topActivityLetterboxWidth = TaskInfo.PROPERTY_VALUE_UNSET;
@@ -3562,15 +3571,29 @@ class Task extends TaskFragment {
             appCompatTaskInfo.topActivityLetterboxWidth = top.getBounds().width();
             appCompatTaskInfo.topActivityLetterboxHeight = top.getBounds().height();
         }
+        // We need to consider if letterboxed or pillarboxed
+        // TODO(b/336807329) Encapsulate reachability logic
+        appCompatTaskInfo.isLetterboxDoubleTapEnabled = top != null
+                && top.mLetterboxUiController.isLetterboxDoubleTapEducationEnabled();
         if (appCompatTaskInfo.isLetterboxDoubleTapEnabled) {
             if (appCompatTaskInfo.isTopActivityPillarboxed()) {
-                // Pillarboxed
-                appCompatTaskInfo.topActivityLetterboxHorizontalPosition =
-                        top.mLetterboxUiController.getLetterboxPositionForHorizontalReachability();
+                if (top.mLetterboxUiController.allowHorizontalReachabilityForThinLetterbox()) {
+                    // Pillarboxed
+                    appCompatTaskInfo.topActivityLetterboxHorizontalPosition =
+                            top.mLetterboxUiController
+                                    .getLetterboxPositionForHorizontalReachability();
+                } else {
+                    appCompatTaskInfo.isLetterboxDoubleTapEnabled = false;
+                }
             } else {
-                // Letterboxed
-                appCompatTaskInfo.topActivityLetterboxVerticalPosition =
-                        top.mLetterboxUiController.getLetterboxPositionForVerticalReachability();
+                if (top.mLetterboxUiController.allowVerticalReachabilityForThinLetterbox()) {
+                    // Letterboxed
+                    appCompatTaskInfo.topActivityLetterboxVerticalPosition =
+                            top.mLetterboxUiController
+                                    .getLetterboxPositionForVerticalReachability();
+                } else {
+                    appCompatTaskInfo.isLetterboxDoubleTapEnabled = false;
+                }
             }
         }
         appCompatTaskInfo.topActivityEligibleForUserAspectRatioButton = top != null
@@ -4600,7 +4623,10 @@ class Task extends TaskFragment {
         }
         final WindowState w = getTopVisibleAppMainWindow();
         if (w != null) {
+            w.mIsSurfacePositionPaused = true;
             w.applyWithNextDraw((d) -> {
+                w.mIsSurfacePositionPaused = false;
+                w.updateSurfacePosition(d);
                 d.merge(t);
             });
         } else {

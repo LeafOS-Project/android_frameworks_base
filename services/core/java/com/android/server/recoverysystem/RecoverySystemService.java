@@ -558,28 +558,6 @@ public class RecoverySystemService extends IRecoverySystem.Stub implements Reboo
         } catch (android.security.KeyStoreException e) {
             Log.wtf(TAG, "Failed to delete all keys from keystore.", e);
         }
-
-        try {
-            ISecretkeeper secretKeeper = getSecretKeeper();
-            if (secretKeeper != null) {
-                Slogf.i(TAG, "ISecretkeeper.deleteAll();");
-                secretKeeper.deleteAll();
-            }
-        } catch (RemoteException e) {
-            Log.wtf(TAG, "Failed to delete all secrets from secretkeeper.", e);
-        }
-    }
-
-    private static @Nullable ISecretkeeper getSecretKeeper() {
-        ISecretkeeper result = null;
-        try {
-            result = ISecretkeeper.Stub.asInterface(
-                ServiceManager.waitForDeclaredService(ISecretkeeper.DESCRIPTOR + "/default"));
-        } catch (SecurityException e) {
-            Slog.w(TAG, "Does not have permissions to get AIDL secretkeeper service");
-        }
-
-        return result;
     }
 
     private void enforcePermissionForResumeOnReboot() {

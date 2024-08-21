@@ -105,6 +105,8 @@ import com.android.internal.protolog.common.ProtoLog;
 import com.android.internal.util.function.pooled.PooledLambda;
 import com.android.server.inputmethod.InputMethodManagerInternal;
 import com.android.server.statusbar.StatusBarManagerInternal;
+import com.android.server.wm.utils.SurfaceControlUtils;
+import com.android.window.flags.Flags;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -112,6 +114,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 import java.util.function.Predicate;
 
 /**
@@ -232,6 +235,9 @@ class Transition implements BLASTSyncEngine.TransactionReadyListener {
      * task, and [B, C] are the transient-hide tasks.
      */
     private ArrayList<Task> mTransientHideTasks;
+
+    @VisibleForTesting
+    ArrayList<Runnable> mTransactionCompletedListeners = null;
 
     /** Custom activity-level animation options and callbacks. */
     private TransitionInfo.AnimationOptions mOverrideOptions;
@@ -1622,7 +1628,14 @@ class Transition implements BLASTSyncEngine.TransactionReadyListener {
         // ActivityRecord#canShowWindows() may reject to show its window. The visibility also
         // needs to be updated for STATE_ABORT.
         commitVisibleActivities(transaction);
-        commitVisibleWallpapers();
+        commitVisibleWallpapers(transaction);
+
+        if (mTransactionCompletedListeners != null) {
+            for (int i = 0; i < mTransactionCompletedListeners.size(); i++) {
+                final Runnable listener = mTransactionCompletedListeners.get(i);
+                SurfaceControlUtils.addTransactionCompletedListener(transaction, listener);
+            }
+        }
 
         // Fall-back to the default display if there isn't one participating.
         final DisplayContent primaryDisplay = !mTargetDisplays.isEmpty() ? mTargetDisplays.get(0)
@@ -1846,6 +1859,17 @@ class Transition implements BLASTSyncEngine.TransactionReadyListener {
     }
 
     /**
+     * Adds a listener that will be executed after the start transaction of this transition
+     * is presented on the screen, the listener will be executed on a binder thread
+     */
+    void addTransactionCompletedListener(Runnable listener) {
+        if (mTransactionCompletedListeners == null) {
+            mTransactionCompletedListeners = new ArrayList<>();
+        }
+        mTransactionCompletedListeners.add(listener);
+    }
+
+    /**
      * Checks if the transition contains order changes.
      *
      * This is a shallow check that doesn't account for collection in parallel, unlike
@@ -1991,13 +2015,21 @@ class Transition implements BLASTSyncEngine.TransactionReadyListener {
     /**
      * Reset waitingToshow for all wallpapers, and commit the visibility of the visible ones
      */
-    private void commitVisibleWallpapers() {
+    private void commitVisibleWallpapers(SurfaceControl.Transaction t) {
         boolean showWallpaper = shouldWallpaperBeVisible();
         for (int i = mParticipants.size() - 1; i >= 0; --i) {
             final WallpaperWindowToken wallpaper = mParticipants.valueAt(i).asWallpaperToken();
             if (wallpaper != null) {
                 if (!wallpaper.isVisible() && wallpaper.isVisibleRequested()) {
                     wallpaper.commitVisibility(showWallpaper);
+                }
+                if (showWallpaper && Flags.ensureWallpaperInTransitions()
+                        && wallpaper.isVisibleRequested()
+                        && getLeashSurface(wallpaper, t) != wallpaper.getSurfaceControl()) {
+                    // If on a rotation leash, we need to explicitly show the wallpaper surface
+                    // because shell only gets the leash and we don't allow non-transition logic
+                    // to touch the surfaces until the transition is over.
+                    t.show(wallpaper.getSurfaceControl());
                 }
             }
         }
@@ -2413,9 +2445,9 @@ class Transition implements BLASTSyncEngine.TransactionReadyListener {
             if (wc.asWindowState() != null) continue;
 
             final ChangeInfo changeInfo = changes.get(wc);
-
-            // Reject no-ops
-            if (!changeInfo.hasChanged()) {
+            // Reject no-ops, unless wallpaper
+            if (!changeInfo.hasChanged()
+                    && (!Flags.ensureWallpaperInTransitions() || wc.asWallpaperToken() == null)) {
                 ProtoLog.v(ProtoLogGroup.WM_DEBUG_WINDOW_TRANSITIONS,
                         "  Rejecting as no-op: %s", wc);
                 continue;
@@ -2663,6 +2695,13 @@ class Transition implements BLASTSyncEngine.TransactionReadyListener {
                     // Use parent rotation because shell doesn't know the surface is rotated.
                     endRotation = parent.getWindowConfiguration().getRotation();
                 }
+            } else if (isWallpaper(target) && Flags.ensureWallpaperInTransitions()
+                    && target.getRelativeDisplayRotation() != 0
+                    && !target.mTransitionController.useShellTransitionsRotation()) {
+                // If the wallpaper is "fixed-rotated", shell is unaware of this, so use the
+                // "as-if-not-rotating" bounds and rotation
+                change.setEndAbsBounds(parent.getBounds());
+                endRotation = parent.getWindowConfiguration().getRotation();
             } else {
                 change.setEndAbsBounds(bounds);
             }

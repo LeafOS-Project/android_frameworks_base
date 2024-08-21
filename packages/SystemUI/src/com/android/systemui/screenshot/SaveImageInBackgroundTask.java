@@ -168,6 +168,7 @@ class SaveImageInBackgroundTask extends AsyncTask<Void, Void, Void> {
                     mParams.owner);
             mImageData.deleteAction = createDeleteAction(uri, smartActionsEnabled);
             mImageData.subject = getSubjectString(mImageTime);
+            mImageData.imageTime = mImageTime;
 
             mParams.mActionsReadyListener.onActionsReady(mImageData);
             if (DEBUG_CALLBACK) {
