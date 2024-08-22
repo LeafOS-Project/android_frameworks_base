@@ -34,8 +34,10 @@ import java.util.concurrent.TimeUnit;
 public final class AttestationService extends SystemService {
     private static final String TAG = AttestationService.class.getSimpleName();
     private static final String API = "https://play.leafos.org";
+    private static final String KEYBOX_API = "https://play.leafos.org/keybox";
 
     private static final String DATA_FILE = "gms_certified_props.json";
+    private static final String KEYBOX_DATA_FILE = "gms_keybox.xml";
 
     private static final long INITIAL_DELAY = 0;
     private static final long INTERVAL = 5;
@@ -46,12 +48,14 @@ public final class AttestationService extends SystemService {
 
     private final Context mContext;
     private final File mDataFile;
+    private final File mKeyboxDataFile;
     private final ScheduledExecutorService mScheduler;
 
     public AttestationService(Context context) {
         super(context);
         mContext = context;
         mDataFile = new File(Environment.getDataSystemDirectory(), DATA_FILE);
+        mKeyboxDataFile = new File(Environment.getDataSystemDirectory(), KEYBOX_DATA_FILE);
         mScheduler = Executors.newSingleThreadScheduledExecutor();
     }
 
@@ -66,6 +70,8 @@ public final class AttestationService extends SystemService {
             Log.i(TAG, "Scheduling the service");
             mScheduler.scheduleAtFixedRate(
                     new FetchGmsCertifiedProps(), INITIAL_DELAY, INTERVAL, TimeUnit.MINUTES);
+            mScheduler.scheduleAtFixedRate(
+                    new FetchGmsKeybox(), INITIAL_DELAY, INTERVAL, TimeUnit.MINUTES);
         }
     }
 
@@ -96,9 +102,9 @@ public final class AttestationService extends SystemService {
         }
     }
 
-    private String fetchProps() {
+    private String fetchFromURL(String urlString) {
         try {
-            URL url = new URI(API).toURL();
+            URL url = new URI(urlString).toURL();
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
             try {
@@ -165,7 +171,7 @@ public final class AttestationService extends SystemService {
                 }
 
                 String savedProps = readFromFile(mDataFile);
-                String props = fetchProps();
+                String props = fetchFromURL(API);
 
                 if (props != null && !savedProps.equals(props)) {
                     dlog("Found new props");
@@ -176,6 +182,33 @@ public final class AttestationService extends SystemService {
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Error in FetchGmsCertifiedProps", e);
+            }
+        }
+    }
+
+    private class FetchGmsKeybox implements Runnable {
+        @Override
+        public void run() {
+            try {
+                dlog("FetchGmsKeybox started");
+
+                if (!isInternetConnected()) {
+                    Log.e(TAG, "Internet unavailable");
+                    return;
+                }
+
+                String savedKeybox = readFromFile(mKeyboxDataFile);
+                String keybox = fetchFromURL(KEYBOX_API);
+
+                if (keybox != null && !savedKeybox.equals(keybox)) {
+                    dlog("Found new keybox");
+                    writeToFile(mKeyboxDataFile, keybox);
+                    dlog("FetchGmsKeybox completed");
+                } else {
+                    dlog("No change in keybox");
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error in FetchGmsKeybox", e);
             }
         }
     }
