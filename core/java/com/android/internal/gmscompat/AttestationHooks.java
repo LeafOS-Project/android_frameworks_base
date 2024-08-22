@@ -20,19 +20,53 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Process;
 import android.os.SystemProperties;
+import android.security.keystore.KeyProperties;
+import android.system.keystore2.KeyEntryResponse;
 import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.lang.reflect.Field;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ThreadLocalRandom;
+
+import com.android.internal.org.bouncycastle.asn1.ASN1Boolean;
+import com.android.internal.org.bouncycastle.asn1.ASN1Encodable;
+import com.android.internal.org.bouncycastle.asn1.ASN1EncodableVector;
+import com.android.internal.org.bouncycastle.asn1.ASN1Enumerated;
+import com.android.internal.org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import com.android.internal.org.bouncycastle.asn1.ASN1OctetString;
+import com.android.internal.org.bouncycastle.asn1.ASN1Sequence;
+import com.android.internal.org.bouncycastle.asn1.ASN1TaggedObject;
+import com.android.internal.org.bouncycastle.asn1.DEROctetString;
+import com.android.internal.org.bouncycastle.asn1.DERSequence;
+import com.android.internal.org.bouncycastle.asn1.DERTaggedObject;
+import com.android.internal.org.bouncycastle.asn1.x509.Extension;
+import com.android.internal.org.bouncycastle.cert.X509CertificateHolder;
+import com.android.internal.org.bouncycastle.cert.X509v3CertificateBuilder;
+import com.android.internal.org.bouncycastle.operator.ContentSigner;
+import com.android.internal.org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 /** @hide */
 public final class AttestationHooks {
@@ -43,6 +77,7 @@ public final class AttestationHooks {
     private static final String PROCESS_UNSTABLE = "com.google.android.gms.unstable";
     private static final String SAMSUNG = "com.samsung.android.";
     private static final String DATA_FILE = "gms_certified_props.json";
+    private static final String KEYBOX_DATA_FILE = "gms_keybox.xml";
 
     private static final boolean SPOOF_GMS =
             SystemProperties.getBoolean("persist.sys.spoof.gms", true);
@@ -53,6 +88,20 @@ public final class AttestationHooks {
 
     private static volatile String sProcessName;
     private static volatile boolean sIsGms = false;
+
+    private static final String ATTR_ALGORITHM = "algorithm";
+    private static final String TAG_KEY = "Key";
+    private static final String TAG_PRIVATE_KEY = "PrivateKey";
+    private static final String TAG_CERTIFICATE = "Certificate";
+
+    private static String savedKeybox;
+    private static PrivateKey EC, RSA;
+    private static byte[] EC_CERTS;
+    private static byte[] RSA_CERTS;
+    private static final ASN1ObjectIdentifier OID = new ASN1ObjectIdentifier("1.3.6.1.4.1.11129.2.1.17");
+    private static CertificateFactory certificateFactory;
+    private static X509CertificateHolder EC_holder, RSA_holder;
+    private static volatile String algo;
 
     private AttestationHooks() {}
 
@@ -188,16 +237,224 @@ public final class AttestationHooks {
         return gmsUid == callingUid;
     }
 
-    private static boolean isCallerSafetyNet() {
-        return Arrays.stream(Thread.currentThread().getStackTrace())
-                .anyMatch(elem -> elem.getClassName().contains("DroidGuard"));
+    private static PrivateKey parsePrivateKey(String str, String algo) throws Throwable {
+        byte[] bytes = Base64.getDecoder().decode(str);
+        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(bytes);
+        return KeyFactory.getInstance(algo).generatePrivate(spec);
     }
 
-    public static void onEngineGetCertificateChain() {
-        // Check stack for SafetyNet
-        if (sIsGms && isCallerSafetyNet()) {
-            throw new UnsupportedOperationException();
+    private static byte[] parseCert(String str) {
+        return Base64.getDecoder().decode(str);
+    }
+
+    private static byte[] getCertificateChain(String algo) throws Throwable {
+        if (KeyProperties.KEY_ALGORITHM_EC.equals(algo)) {
+            return EC_CERTS;
+        } else if (KeyProperties.KEY_ALGORITHM_RSA.equals(algo)) {
+            return RSA_CERTS;
         }
+        throw new Exception();
+    }
+
+    private static boolean parseKeybox() {
+        File dataFile = new File(Environment.getDataSystemDirectory(), KEYBOX_DATA_FILE);
+        String keybox = readFromFile(dataFile);
+
+        if (TextUtils.isEmpty(keybox)) {
+            Log.e(TAG, "No keybox found to spoof");
+            return false;
+        }
+
+        if (savedKeybox != null && savedKeybox.equals(keybox)) {
+            dlog("Keybox already loaded");
+            return true;
+        }
+
+        dlog("Found keybox");
+        try {
+            certificateFactory = CertificateFactory.getInstance("X.509");
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            XmlPullParser xpp = factory.newPullParser();
+
+            String algorithm = "";
+            String privateKey = "";
+            List<String> certificateChain = new ArrayList<>();
+
+            xpp.setInput(new StringReader(keybox));
+            int eventType = xpp.getEventType();
+            String currentTag = null;
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                if (eventType == XmlPullParser.START_TAG) {
+                    if (TAG_KEY.equalsIgnoreCase(xpp.getName())) {
+                        algorithm = xpp.getAttributeValue(null, ATTR_ALGORITHM);
+                        privateKey = "";
+                        certificateChain = new ArrayList<>();
+                    }
+
+                    currentTag = xpp.getName();
+                } else if (eventType == XmlPullParser.END_TAG) {
+                    if (TAG_KEY.equalsIgnoreCase(xpp.getName())) {
+                        stream.reset();
+
+                        switch (algorithm.toUpperCase(Locale.ROOT)) {
+                            case "ECDSA":
+                                EC = parsePrivateKey(privateKey, KeyProperties.KEY_ALGORITHM_EC);
+
+                                for (int i = 0; i < certificateChain.size(); i++) {
+                                    byte[] cert = parseCert(certificateChain.get(i));
+
+                                    stream.write(cert);
+                                    if (i == 0) {
+                                        EC_holder = new X509CertificateHolder(cert);
+                                    }
+                                }
+
+                                EC_CERTS = stream.toByteArray();
+
+                                break;
+                            case "RSA":
+                                RSA = parsePrivateKey(privateKey, KeyProperties.KEY_ALGORITHM_RSA);
+
+                                for (int i = 0; i < certificateChain.size(); i++) {
+                                    byte[] cert = parseCert(certificateChain.get(i));
+
+                                    stream.write(cert);
+                                    if (i == 0) {
+                                        RSA_holder = new X509CertificateHolder(cert);
+                                    }
+                                }
+
+                                RSA_CERTS = stream.toByteArray();
+                                break;
+                            default:
+                                Log.e(TAG, "Unknown algorithm: " + algorithm);
+                                break;
+                        }
+                    }
+
+                    currentTag = null;
+                } else if (eventType == XmlPullParser.TEXT) {
+                    if (TAG_PRIVATE_KEY.equalsIgnoreCase(currentTag)) {
+                        privateKey = xpp.getText();
+                    } else if (TAG_CERTIFICATE.equalsIgnoreCase(currentTag)) {
+                        certificateChain.add(xpp.getText());
+                    }
+                }
+
+                eventType = xpp.next();
+            }
+
+            stream.close();
+
+            savedKeybox = keybox;
+            return true;
+        } catch (Throwable t) {
+            Log.e(TAG, "Error parsing keybox XML", t);
+        }
+
+        return false;
+    }
+
+    private static byte[] modifyLeaf(byte[] bytes) throws Throwable {
+        X509Certificate leaf = (X509Certificate) certificateFactory.generateCertificate(new ByteArrayInputStream(bytes));
+
+        if (leaf.getExtensionValue(OID.getId()) == null) throw new Exception();
+
+        X509CertificateHolder holder = new X509CertificateHolder(leaf.getEncoded());
+
+        Extension ext = holder.getExtension(OID);
+
+        ASN1Sequence sequence = ASN1Sequence.getInstance(ext.getExtnValue().getOctets());
+
+        ASN1Encodable[] encodables = sequence.toArray();
+
+        ASN1Sequence teeEnforced = (ASN1Sequence) encodables[7];
+
+        ASN1EncodableVector vector = new ASN1EncodableVector();
+
+        ASN1Sequence rootOfTrust = null;
+        for (ASN1Encodable asn1Encodable : teeEnforced) {
+            ASN1TaggedObject taggedObject = (ASN1TaggedObject) asn1Encodable;
+            if (taggedObject.getTagNo() == 704) {
+                rootOfTrust = (ASN1Sequence) taggedObject.getObject();
+                continue;
+            }
+            vector.add(asn1Encodable);
+        }
+
+        if (rootOfTrust == null) throw new Exception();
+
+        algo = leaf.getPublicKey().getAlgorithm();
+
+        boolean isEC = KeyProperties.KEY_ALGORITHM_EC.equals(algo);
+
+        X509CertificateHolder cert1 = isEC ? EC_holder : RSA_holder;
+        PrivateKey privateKey = isEC ? EC : RSA;
+
+        X509v3CertificateBuilder builder = new X509v3CertificateBuilder(cert1.getSubject(), holder.getSerialNumber(), holder.getNotBefore(), holder.getNotAfter(), holder.getSubject(), holder.getSubjectPublicKeyInfo());
+        ContentSigner signer = new JcaContentSignerBuilder(leaf.getSigAlgName()).build(privateKey);
+
+        byte[] verifiedBootKey = new byte[32];
+        ThreadLocalRandom.current().nextBytes(verifiedBootKey);
+
+        DEROctetString verifiedBootHash = (DEROctetString) rootOfTrust.getObjectAt(3);
+
+        if (verifiedBootHash == null) {
+            byte[] temp = new byte[32];
+            ThreadLocalRandom.current().nextBytes(temp);
+            verifiedBootHash = new DEROctetString(temp);
+        }
+
+        ASN1Encodable[] rootOfTrustEnc = {new DEROctetString(verifiedBootKey), ASN1Boolean.TRUE, new ASN1Enumerated(0), new DEROctetString(verifiedBootHash)};
+
+        ASN1Sequence rootOfTrustSeq = new DERSequence(rootOfTrustEnc);
+
+        ASN1TaggedObject rootOfTrustTagObj = new DERTaggedObject(704, rootOfTrustSeq);
+
+        vector.add(rootOfTrustTagObj);
+
+        ASN1Sequence hackEnforced = new DERSequence(vector);
+
+        encodables[7] = hackEnforced;
+
+        ASN1Sequence hackedSeq = new DERSequence(encodables);
+
+        ASN1OctetString hackedSeqOctets = new DEROctetString(hackedSeq);
+
+        Extension hackedExt = new Extension(OID, false, hackedSeqOctets);
+
+        builder.addExtension(hackedExt);
+
+        for (ASN1ObjectIdentifier extensionOID : holder.getExtensions().getExtensionOIDs()) {
+            if (OID.getId().equals(extensionOID.getId())) continue;
+            builder.addExtension(holder.getExtension(extensionOID));
+        }
+
+        return builder.build(signer).getEncoded();
+    }
+
+    public static KeyEntryResponse onGetKeyEntry(KeyEntryResponse response) {
+        if (response == null) return null;
+
+        if (response.metadata == null) return response;
+
+        if (!parseKeybox()) return response;
+
+        algo = null;
+
+        try {
+            byte[] newLeaf = modifyLeaf(response.metadata.certificate);
+            response.metadata.certificateChain = getCertificateChain(algo);
+
+            response.metadata.certificate = newLeaf;
+
+        } catch (Throwable t) {
+            if (DEBUG) Log.e(TAG, "onGetKeyEntry", t);
+        }
+
+        return response;
     }
 
     private static String readFromFile(File file) {
