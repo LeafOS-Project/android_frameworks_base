@@ -520,7 +520,7 @@ public class AuthContainerView extends LinearLayout
         //  files with the corresponding left/right or top/bottom constraints being set to "parent".
         mCredentialView = factory.inflate(layoutResourceId, mLayout, false);
 
-        if (credentialType == Utils.CREDENTIAL_PATTERN) {
+        if (credentialType instanceof PromptKind.Pattern) {
             LockPatternView lockPatternView = mCredentialView.findViewById(R.id.lockPattern);
             lockPatternView.setLockPatternSize(
                     mLockPatternUtils.getLockPatternSize(mConfig.mUserId));
