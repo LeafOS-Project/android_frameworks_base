@@ -127,7 +127,8 @@ public class WallpaperCropper {
 
         // Case 1: if no crops are provided, show the full image (from the left, or right if RTL).
         if (suggestedCrops == null || suggestedCrops.size() == 0) {
-            Rect crop = new Rect(0, 0, bitmapSize.x, bitmapSize.y);
+            int startX = (bitmapSize.x - displaySize.x) / 2;
+            Rect crop = new Rect(startX, 0, bitmapSize.x - startX, bitmapSize.y);
 
             // The first exception is if the device is a foldable and we're on the folded screen.
             // In that case, show the center of what's on the unfolded screen.
