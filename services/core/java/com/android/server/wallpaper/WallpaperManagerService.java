@@ -269,7 +269,7 @@ public class WallpaperManagerService extends IWallpaperManager.Stub
             final File changedFile = new File(mWallpaperDir, path);
             final boolean sysWallpaperChanged = (mWallpaperFile.equals(changedFile));
             final boolean lockWallpaperChanged = (mWallpaperLockFile.equals(changedFile));
-            final WallpaperData wallpaper = dataForEvent(lockWallpaperChanged);
+            final WallpaperData wallpaper = dataForEvent(sysWallpaperChanged);
 
             final boolean moved = (event == MOVED_TO);
             final boolean written = (event == CLOSE_WRITE || moved);
